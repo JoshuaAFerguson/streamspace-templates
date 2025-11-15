@@ -1,0 +1,243 @@
+apiVersion: stream.space/v1alpha1
+kind: TemplateCatalog
+metadata:
+  name: streamspace-official-templates
+  version: "1.0.0"
+  repository: https://github.com/JoshuaAFerguson/streamspace-templates
+  description: Official StreamSpace application templates
+
+spec:
+  categories:
+    - name: browsers
+      displayName: Web Browsers
+      description: Modern web browsers for internet access
+      icon: 🌐
+      templates: 4
+
+    - name: development
+      displayName: Development Tools
+      description: IDEs, editors, and development environments
+      icon: 💻
+      templates: 3
+
+    - name: productivity
+      displayName: Productivity
+      description: Office suites and productivity applications
+      icon: 📝
+      templates: 2
+
+    - name: design
+      displayName: Design & Graphics
+      description: Image editing, vector graphics, and 3D modeling
+      icon: 🎨
+      templates: 6
+
+    - name: media
+      displayName: Media Production
+      description: Audio and video editing tools
+      icon: 🎬
+      templates: 2
+
+    - name: gaming
+      displayName: Gaming & Emulation
+      description: Game emulators and gaming platforms
+      icon: 🎮
+      templates: 2
+
+    - name: webtop
+      displayName: Desktop Environments
+      description: Full Linux desktop environments
+      icon: 🖥️
+      templates: 3
+
+  templates:
+    # Web Browsers
+    - name: firefox-browser
+      category: browsers
+      displayName: Firefox
+      description: Modern, privacy-focused web browser
+      tags: [browser, web, privacy, mozilla]
+      path: browsers/firefox.yaml
+      version: "1.0.0"
+
+    - name: chromium-browser
+      category: browsers
+      displayName: Chromium
+      description: Open-source web browser
+      tags: [browser, web, google, chromium]
+      path: browsers/chromium.yaml
+      version: "1.0.0"
+
+    - name: brave-browser
+      category: browsers
+      displayName: Brave
+      description: Privacy-focused browser with ad blocking
+      tags: [browser, web, privacy, adblock]
+      path: browsers/brave.yaml
+      version: "1.0.0"
+
+    - name: librewolf-browser
+      category: browsers
+      displayName: LibreWolf
+      description: Security-focused Firefox fork
+      tags: [browser, web, privacy, firefox]
+      path: browsers/librewolf.yaml
+      version: "1.0.0"
+
+    # Development Tools
+    - name: code-server
+      category: development
+      displayName: VS Code
+      description: Visual Studio Code in the browser
+      tags: [ide, editor, development, vscode]
+      path: development/code-server.yaml
+      version: "1.0.0"
+
+    - name: github-desktop
+      category: development
+      displayName: GitHub Desktop
+      description: Git GUI client for GitHub
+      tags: [git, github, version-control]
+      path: development/github-desktop.yaml
+      version: "1.0.0"
+
+    - name: gitqlient
+      category: development
+      displayName: GitQlient
+      description: Qt-based Git GUI client
+      tags: [git, version-control, gui]
+      path: development/gitqlient.yaml
+      version: "1.0.0"
+
+    # Productivity
+    - name: libreoffice
+      category: productivity
+      displayName: LibreOffice
+      description: Complete open-source office suite
+      tags: [office, documents, spreadsheets, presentations]
+      path: productivity/libreoffice.yaml
+      version: "1.0.0"
+
+    - name: calligra
+      category: productivity
+      displayName: Calligra Suite
+      description: KDE office and creative suite
+      tags: [office, kde, documents]
+      path: productivity/calligra.yaml
+      version: "1.0.0"
+
+    # Design & Graphics
+    - name: gimp
+      category: design
+      displayName: GIMP
+      description: GNU Image Manipulation Program
+      tags: [image-editing, graphics, photo]
+      path: design/gimp.yaml
+      version: "1.0.0"
+
+    - name: krita
+      category: design
+      displayName: Krita
+      description: Digital painting and illustration
+      tags: [painting, drawing, art, digital]
+      path: design/krita.yaml
+      version: "1.0.0"
+
+    - name: inkscape
+      category: design
+      displayName: Inkscape
+      description: Vector graphics editor
+      tags: [vector, graphics, svg]
+      path: design/inkscape.yaml
+      version: "1.0.0"
+
+    - name: blender
+      category: design
+      displayName: Blender
+      description: 3D creation suite
+      tags: [3d, modeling, animation, rendering]
+      path: design/blender.yaml
+      version: "1.0.0"
+
+    - name: freecad
+      category: design
+      displayName: FreeCAD
+      description: Parametric 3D CAD modeler
+      tags: [cad, 3d, engineering, mechanical]
+      path: design/freecad.yaml
+      version: "1.0.0"
+
+    - name: kicad
+      category: design
+      displayName: KiCad
+      description: Electronic design automation suite
+      tags: [pcb, electronics, eda, circuit]
+      path: design/kicad.yaml
+      version: "1.0.0"
+
+    # Media Production
+    - name: audacity
+      category: media
+      displayName: Audacity
+      description: Multi-track audio editor
+      tags: [audio, sound, recording, editing]
+      path: media/audacity.yaml
+      version: "1.0.0"
+
+    - name: kdenlive
+      category: media
+      displayName: Kdenlive
+      description: Professional video editor
+      tags: [video, editing, production, kde]
+      path: media/kdenlive.yaml
+      version: "1.0.0"
+
+    # Gaming & Emulation
+    - name: duckstation
+      category: gaming
+      displayName: DuckStation
+      description: PlayStation emulator
+      tags: [gaming, emulator, playstation, retro]
+      path: gaming/duckstation.yaml
+      version: "1.0.0"
+
+    - name: dolphin
+      category: gaming
+      displayName: Dolphin Emulator
+      description: GameCube and Wii emulator
+      tags: [gaming, emulator, gamecube, wii, nintendo]
+      path: gaming/dolphin.yaml
+      version: "1.0.0"
+
+    # Desktop Environments
+    - name: webtop-ubuntu-xfce
+      category: webtop
+      displayName: Ubuntu XFCE Desktop
+      description: Ubuntu with XFCE desktop environment
+      tags: [desktop, ubuntu, xfce, linux]
+      path: webtop/webtop-ubuntu-xfce.yaml
+      version: "1.0.0"
+
+    - name: webtop-ubuntu-kde
+      category: webtop
+      displayName: Ubuntu KDE Desktop
+      description: Ubuntu with KDE Plasma desktop
+      tags: [desktop, ubuntu, kde, plasma, linux]
+      path: webtop/webtop-ubuntu-kde.yaml
+      version: "1.0.0"
+
+    - name: webtop-alpine-i3
+      category: webtop
+      displayName: Alpine i3 Desktop
+      description: Lightweight Alpine Linux with i3 window manager
+      tags: [desktop, alpine, i3, minimal, linux]
+      path: webtop/webtop-alpine-i3.yaml
+      version: "1.0.0"
+
+  stats:
+    totalTemplates: 22
+    totalCategories: 7
+    lastUpdated: "2025-11-15"
+    compatibleVersions:
+      - "v1.0.0"
+      - "v1.1.0"

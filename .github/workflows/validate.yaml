@@ -1,0 +1,101 @@
+name: Validate Templates
+
+on:
+  pull_request:
+    paths:
+      - '**.yaml'
+      - '**.yml'
+  push:
+    branches:
+      - main
+    paths:
+      - '**.yaml'
+      - '**.yml'
+
+jobs:
+  validate:
+    name: Validate Template Manifests
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up kubectl
+        uses: azure/setup-kubectl@v4
+        with:
+          version: 'v1.28.0'
+
+      - name: Validate YAML syntax
+        run: |
+          echo "Validating YAML syntax..."
+          for file in $(find . -name "*.yaml" -o -name "*.yml" | grep -v ".github"); do
+            echo "Checking $file"
+            kubectl apply --dry-run=client -f "$file" || exit 1
+          done
+
+      - name: Check required fields
+        run: |
+          echo "Checking required Template fields..."
+          for file in $(find browsers development productivity design media gaming webtop -name "*.yaml" 2>/dev/null); do
+            echo "Validating $file"
+
+            # Check apiVersion
+            if ! grep -q "apiVersion: stream.space/v1alpha1" "$file"; then
+              echo "ERROR: Missing or incorrect apiVersion in $file"
+              exit 1
+            fi
+
+            # Check kind
+            if ! grep -q "kind: Template" "$file"; then
+              echo "ERROR: Missing or incorrect kind in $file"
+              exit 1
+            fi
+
+            # Check required spec fields
+            if ! grep -q "displayName:" "$file"; then
+              echo "WARNING: Missing displayName in $file"
+            fi
+
+            if ! grep -q "category:" "$file"; then
+              echo "WARNING: Missing category in $file"
+            fi
+
+            if ! grep -q "baseImage:" "$file"; then
+              echo "ERROR: Missing baseImage in $file"
+              exit 1
+            fi
+
+            echo "✓ $file passed validation"
+          done
+
+      - name: Check catalog consistency
+        run: |
+          if [ -f catalog.yaml ]; then
+            echo "Checking catalog.yaml consistency..."
+
+            # Count templates in directories
+            ACTUAL_COUNT=$(find browsers development productivity design media gaming webtop -name "*.yaml" 2>/dev/null | wc -l)
+            CATALOG_COUNT=$(grep -c "path:" catalog.yaml || echo 0)
+
+            echo "Templates in directories: $ACTUAL_COUNT"
+            echo "Templates in catalog: $CATALOG_COUNT"
+
+            if [ "$ACTUAL_COUNT" != "$CATALOG_COUNT" ]; then
+              echo "WARNING: Template count mismatch. Update catalog.yaml"
+            fi
+          fi
+
+      - name: Summary
+        if: success()
+        run: |
+          echo "✅ All templates validated successfully!"
+          echo ""
+          echo "Template Statistics:"
+          echo "- Browsers: $(find browsers -name "*.yaml" 2>/dev/null | wc -l)"
+          echo "- Development: $(find development -name "*.yaml" 2>/dev/null | wc -l)"
+          echo "- Productivity: $(find productivity -name "*.yaml" 2>/dev/null | wc -l)"
+          echo "- Design: $(find design -name "*.yaml" 2>/dev/null | wc -l)"
+          echo "- Media: $(find media -name "*.yaml" 2>/dev/null | wc -l)"
+          echo "- Gaming: $(find gaming -name "*.yaml" 2>/dev/null | wc -l)"
+          echo "- Webtop: $(find webtop -name "*.yaml" 2>/dev/null | wc -l)"
