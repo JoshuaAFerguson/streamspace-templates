@@ -1,0 +1,40 @@
+apiVersion: stream.space/v1alpha1
+kind: Template
+metadata:
+  name: bambustudio
+  namespace: workspaces
+spec:
+  displayName: Bambustudio
+  description: '[Bambu Studio] is an open-source, cutting-edge, feature-rich slicing
+    software. It contains project-based workflows, systematically optimized slicing
+    algorithms, and an easy-to-use graphical interface, bringing users an incredibly
+    smooth printing experience.'
+  category: Design & Graphics
+  icon: https://raw.githubusercontent.com/linuxserver/docker-templates/master/linuxserver.io/img/bambustudio-logo.png
+  baseImage: lscr.io/linuxserver/bambustudio:latest
+  defaultResources:
+    memory: 4Gi
+    cpu: 2000m
+  ports:
+  - name: vnc
+    containerPort: 3000
+    protocol: TCP
+  env:
+  - name: PUID
+    value: '1000'
+  - name: PGID
+    value: '1000'
+  - name: TZ
+    value: America/New_York
+  volumeMounts:
+  - name: user-home
+    mountPath: /config
+  kasmvnc:
+    enabled: true
+    port: 3000
+  capabilities:
+  - Network
+  - Clipboard
+  tags:
+  - bambustudio
+  - design & graphics

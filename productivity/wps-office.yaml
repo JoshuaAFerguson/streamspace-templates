@@ -1,0 +1,40 @@
+apiVersion: stream.space/v1alpha1
+kind: Template
+metadata:
+  name: wps-office
+  namespace: workspaces
+spec:
+  displayName: Wps-Office
+  description: '[WPS Office] is a lightweight, feature-rich comprehensive office suite
+    with high compatibility. As a handy and professional office software, WPS Office
+    allows you to edit files in Writer, Presentation, Spreadsheet, and PDF to improve
+    your work efficiency.'
+  category: Productivity
+  icon: https://raw.githubusercontent.com/linuxserver/docker-templates/master/linuxserver.io/img/wps-office-logo.png
+  baseImage: lscr.io/linuxserver/wps-office:latest
+  defaultResources:
+    memory: 3Gi
+    cpu: 1500m
+  ports:
+  - name: vnc
+    containerPort: 3000
+    protocol: TCP
+  env:
+  - name: PUID
+    value: '1000'
+  - name: PGID
+    value: '1000'
+  - name: TZ
+    value: America/New_York
+  volumeMounts:
+  - name: user-home
+    mountPath: /config
+  kasmvnc:
+    enabled: true
+    port: 3000
+  capabilities:
+  - Network
+  - Clipboard
+  tags:
+  - wps-office
+  - productivity

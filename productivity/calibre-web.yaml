@@ -1,0 +1,41 @@
+apiVersion: stream.space/v1alpha1
+kind: Template
+metadata:
+  name: calibre-web
+  namespace: workspaces
+spec:
+  displayName: Calibre-Web
+  description: calibre-web is a web app providing a clean interface for browsing,
+    reading and downloading eBooks using an existing Calibre database.   It is also
+    possible to integrate google drive and edit metadata and your calibre library
+    through the app itself.  This software is a fork of library and licensed under
+    the GPL v3 License.
+  category: Productivity
+  icon: https://raw.githubusercontent.com/linuxserver/docker-templates/master/linuxserver.io/img/calibre-web-logo.png
+  baseImage: lscr.io/linuxserver/calibre-web:latest
+  defaultResources:
+    memory: 3Gi
+    cpu: 1500m
+  ports:
+  - name: vnc
+    containerPort: 3000
+    protocol: TCP
+  env:
+  - name: PUID
+    value: '1000'
+  - name: PGID
+    value: '1000'
+  - name: TZ
+    value: America/New_York
+  volumeMounts:
+  - name: user-home
+    mountPath: /config
+  kasmvnc:
+    enabled: true
+    port: 3000
+  capabilities:
+  - Network
+  - Clipboard
+  tags:
+  - calibre-web
+  - productivity

@@ -1,0 +1,40 @@
+apiVersion: stream.space/v1alpha1
+kind: Template
+metadata:
+  name: orcaslicer
+  namespace: workspaces
+spec:
+  displayName: Orcaslicer
+  description: '[Orca Slicer] is an open source slicer for FDM printers. OrcaSlicer
+    is fork of Bambu Studio, it was previously known as BambuStudio-SoftFever, Bambu
+    Studio is forked from PrusaSlicer by Prusa Research, which is from Slic3r by Alessandro
+    Ranellucci and the RepRap community'
+  category: Design & Graphics
+  icon: https://raw.githubusercontent.com/linuxserver/docker-templates/master/linuxserver.io/img/orcaslicer-logo.png
+  baseImage: lscr.io/linuxserver/orcaslicer:latest
+  defaultResources:
+    memory: 4Gi
+    cpu: 2000m
+  ports:
+  - name: vnc
+    containerPort: 3000
+    protocol: TCP
+  env:
+  - name: PUID
+    value: '1000'
+  - name: PGID
+    value: '1000'
+  - name: TZ
+    value: America/New_York
+  volumeMounts:
+  - name: user-home
+    mountPath: /config
+  kasmvnc:
+    enabled: true
+    port: 3000
+  capabilities:
+  - Network
+  - Clipboard
+  tags:
+  - orcaslicer
+  - design & graphics

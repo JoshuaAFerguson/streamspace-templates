@@ -1,0 +1,40 @@
+apiVersion: stream.space/v1alpha1
+kind: Template
+metadata:
+  name: resilio-sync
+  namespace: workspaces
+spec:
+  displayName: Resilio-Sync
+  description: resilio-sync (formerly BitTorrent Sync) uses the BitTorrent protocol
+    to sync files and folders between all of your devices. There are both free and
+    paid versions, this container supports both. There is an official sync image but
+    we created this one as it supports user mapping to simplify permissions for volumes.
+  category: Backup
+  icon: https://raw.githubusercontent.com/linuxserver/docker-templates/master/linuxserver.io/img/resilio-sync-logo.png
+  baseImage: lscr.io/linuxserver/resilio-sync:latest
+  defaultResources:
+    memory: 2Gi
+    cpu: 1000m
+  ports:
+  - name: http
+    containerPort: 8080
+    protocol: TCP
+  env:
+  - name: PUID
+    value: '1000'
+  - name: PGID
+    value: '1000'
+  - name: TZ
+    value: America/New_York
+  volumeMounts:
+  - name: user-home
+    mountPath: /config
+  kasmvnc:
+    enabled: false
+    port: 8080
+  capabilities:
+  - Network
+  - Clipboard
+  tags:
+  - resilio-sync
+  - backup

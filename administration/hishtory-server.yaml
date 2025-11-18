@@ -1,0 +1,40 @@
+apiVersion: stream.space/v1alpha1
+kind: Template
+metadata:
+  name: hishtory-server
+  namespace: workspaces
+spec:
+  displayName: Hishtory-Server
+  description: '[hiSHtory] is a better shell history. It stores your shell history
+    in context (what directory you ran the command in, whether it succeeded or failed,
+    how long it took, etc). This is all stored locally and end-to-end encrypted for
+    syncing to to all your other computers.'
+  category: Administration
+  icon: https://raw.githubusercontent.com/linuxserver/docker-templates/master/linuxserver.io/img/hishtory-server-logo.png
+  baseImage: lscr.io/linuxserver/hishtory-server:latest
+  defaultResources:
+    memory: 2Gi
+    cpu: 1000m
+  ports:
+  - name: http
+    containerPort: 8080
+    protocol: TCP
+  env:
+  - name: PUID
+    value: '1000'
+  - name: PGID
+    value: '1000'
+  - name: TZ
+    value: America/New_York
+  volumeMounts:
+  - name: user-home
+    mountPath: /config
+  kasmvnc:
+    enabled: false
+    port: 8080
+  capabilities:
+  - Network
+  - Clipboard
+  tags:
+  - hishtory-server
+  - administration

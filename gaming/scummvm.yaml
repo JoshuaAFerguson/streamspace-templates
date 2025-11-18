@@ -1,0 +1,41 @@
+apiVersion: stream.space/v1alpha1
+kind: Template
+metadata:
+  name: scummvm
+  namespace: workspaces
+spec:
+  displayName: Scummvm
+  description: '[ScummVM] is a program which allows you to run certain classic graphical
+    adventure and role-playing games, provided you already have their data files.
+    The clever part about this: ScummVM just replaces the executables shipped with
+    the games, allowing you to play them on systems for which they were never designed!
+    ScummVM is a complete rewrite of these games'' executables and is not an emulator.'
+  category: Gaming
+  icon: https://raw.githubusercontent.com/linuxserver/docker-templates/master/linuxserver.io/img/scummvm-logo.png
+  baseImage: lscr.io/linuxserver/scummvm:latest
+  defaultResources:
+    memory: 4Gi
+    cpu: 2000m
+  ports:
+  - name: vnc
+    containerPort: 3000
+    protocol: TCP
+  env:
+  - name: PUID
+    value: '1000'
+  - name: PGID
+    value: '1000'
+  - name: TZ
+    value: America/New_York
+  volumeMounts:
+  - name: user-home
+    mountPath: /config
+  kasmvnc:
+    enabled: true
+    port: 3000
+  capabilities:
+  - Network
+  - Clipboard
+  tags:
+  - scummvm
+  - gaming

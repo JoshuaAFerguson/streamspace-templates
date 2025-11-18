@@ -1,0 +1,39 @@
+apiVersion: stream.space/v1alpha1
+kind: Template
+metadata:
+  name: onlyoffice
+  namespace: workspaces
+spec:
+  displayName: Onlyoffice
+  description: '[ONLYOFFICE] provides a full range of tools to create, edit and collaborate
+    on text documents, spreadsheets, presentations, PDF forms and regular PDF files
+    on web, desktop and mobile platforms.'
+  category: Productivity
+  icon: https://raw.githubusercontent.com/linuxserver/docker-templates/master/linuxserver.io/img/onlyoffice-logo.png
+  baseImage: lscr.io/linuxserver/onlyoffice:latest
+  defaultResources:
+    memory: 3Gi
+    cpu: 1500m
+  ports:
+  - name: vnc
+    containerPort: 3000
+    protocol: TCP
+  env:
+  - name: PUID
+    value: '1000'
+  - name: PGID
+    value: '1000'
+  - name: TZ
+    value: America/New_York
+  volumeMounts:
+  - name: user-home
+    mountPath: /config
+  kasmvnc:
+    enabled: true
+    port: 3000
+  capabilities:
+  - Network
+  - Clipboard
+  tags:
+  - onlyoffice
+  - productivity

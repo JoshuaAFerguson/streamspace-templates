@@ -1,0 +1,38 @@
+apiVersion: stream.space/v1alpha1
+kind: Template
+metadata:
+  name: keepassxc
+  namespace: workspaces
+spec:
+  displayName: Keepassxc
+  description: '[KeePassXC] is a free and open-source password manager. It started
+    as a community fork of KeePassX (itself a cross-platform port of KeePass).'
+  category: Security
+  icon: https://raw.githubusercontent.com/linuxserver/docker-templates/master/linuxserver.io/img/keepassxc-logo.png
+  baseImage: lscr.io/linuxserver/keepassxc:latest
+  defaultResources:
+    memory: 2Gi
+    cpu: 1000m
+  ports:
+  - name: http
+    containerPort: 8080
+    protocol: TCP
+  env:
+  - name: PUID
+    value: '1000'
+  - name: PGID
+    value: '1000'
+  - name: TZ
+    value: America/New_York
+  volumeMounts:
+  - name: user-home
+    mountPath: /config
+  kasmvnc:
+    enabled: false
+    port: 8080
+  capabilities:
+  - Network
+  - Clipboard
+  tags:
+  - keepassxc
+  - security

@@ -1,0 +1,38 @@
+apiVersion: stream.space/v1alpha1
+kind: Template
+metadata:
+  name: inkscape
+  namespace: workspaces
+spec:
+  displayName: Inkscape
+  description: '[Inkscape] is professional quality vector graphics software which
+    runs on Linux, Mac OS X and Windows desktop computers.'
+  category: Design & Graphics
+  icon: https://raw.githubusercontent.com/linuxserver/docker-templates/master/linuxserver.io/img/inkscape-logo.png
+  baseImage: lscr.io/linuxserver/inkscape:latest
+  defaultResources:
+    memory: 4Gi
+    cpu: 2000m
+  ports:
+  - name: vnc
+    containerPort: 3000
+    protocol: TCP
+  env:
+  - name: PUID
+    value: '1000'
+  - name: PGID
+    value: '1000'
+  - name: TZ
+    value: America/New_York
+  volumeMounts:
+  - name: user-home
+    mountPath: /config
+  kasmvnc:
+    enabled: true
+    port: 3000
+  capabilities:
+  - Network
+  - Clipboard
+  tags:
+  - inkscape
+  - design & graphics

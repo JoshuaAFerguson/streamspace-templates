@@ -1,0 +1,39 @@
+apiVersion: stream.space/v1alpha1
+kind: Template
+metadata:
+  name: duckdns
+  namespace: workspaces
+spec:
+  displayName: Duckdns
+  description: duckdns is a free service which will point a DNS (sub domains of duckdns.org)
+    to an IP of your choice. The service is completely free, and doesn't require reactivation
+    or forum posts to maintain its existence.
+  category: Network,DNS
+  icon: https://raw.githubusercontent.com/linuxserver/docker-templates/master/linuxserver.io/img/duckdns-logo.png
+  baseImage: lscr.io/linuxserver/duckdns:latest
+  defaultResources:
+    memory: 2Gi
+    cpu: 1000m
+  ports:
+  - name: http
+    containerPort: 8080
+    protocol: TCP
+  env:
+  - name: PUID
+    value: '1000'
+  - name: PGID
+    value: '1000'
+  - name: TZ
+    value: America/New_York
+  volumeMounts:
+  - name: user-home
+    mountPath: /config
+  kasmvnc:
+    enabled: false
+    port: 8080
+  capabilities:
+  - Network
+  - Clipboard
+  tags:
+  - duckdns
+  - network,dns

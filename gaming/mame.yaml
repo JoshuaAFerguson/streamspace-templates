@@ -1,0 +1,39 @@
+apiVersion: stream.space/v1alpha1
+kind: Template
+metadata:
+  name: mame
+  namespace: workspaces
+spec:
+  displayName: Mame
+  description: '[MAME] is a free and open-source emulator designed to emulate the
+    hardware of arcade games, video game consoles, old computers and other systems
+    in software on modern personal computers.'
+  category: Gaming
+  icon: https://raw.githubusercontent.com/linuxserver/docker-templates/master/linuxserver.io/img/mame-logo.png
+  baseImage: lscr.io/linuxserver/mame:latest
+  defaultResources:
+    memory: 4Gi
+    cpu: 2000m
+  ports:
+  - name: vnc
+    containerPort: 3000
+    protocol: TCP
+  env:
+  - name: PUID
+    value: '1000'
+  - name: PGID
+    value: '1000'
+  - name: TZ
+    value: America/New_York
+  volumeMounts:
+  - name: user-home
+    mountPath: /config
+  kasmvnc:
+    enabled: true
+    port: 3000
+  capabilities:
+  - Network
+  - Clipboard
+  tags:
+  - mame
+  - gaming

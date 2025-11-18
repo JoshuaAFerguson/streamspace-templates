@@ -1,0 +1,43 @@
+apiVersion: stream.space/v1alpha1
+kind: Template
+metadata:
+  name: wireguard
+  namespace: workspaces
+spec:
+  displayName: Wireguard
+  description: "[WireGuard\xAE] is an extremely simple yet fast and modern VPN that\
+    \ utilizes state-of-the-art cryptography. It aims to be faster, simpler, leaner,\
+    \ and more useful than IPsec, while avoiding the massive headache. It intends\
+    \ to be considerably more performant than OpenVPN. WireGuard is designed as a\
+    \ general purpose VPN for running on embedded interfaces and super computers alike,\
+    \ fit for many different circumstances. Initially released for the Linux kernel,\
+    \ it is now cross-platform (Windows, macOS, B"
+  category: Network,VPN
+  icon: https://raw.githubusercontent.com/linuxserver/docker-templates/master/linuxserver.io/img/wireguard-logo.png
+  baseImage: lscr.io/linuxserver/wireguard:latest
+  defaultResources:
+    memory: 2Gi
+    cpu: 1000m
+  ports:
+  - name: http
+    containerPort: 8080
+    protocol: TCP
+  env:
+  - name: PUID
+    value: '1000'
+  - name: PGID
+    value: '1000'
+  - name: TZ
+    value: America/New_York
+  volumeMounts:
+  - name: user-home
+    mountPath: /config
+  kasmvnc:
+    enabled: false
+    port: 8080
+  capabilities:
+  - Network
+  - Clipboard
+  tags:
+  - wireguard
+  - network,vpn

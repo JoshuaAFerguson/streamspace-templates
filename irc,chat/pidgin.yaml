@@ -1,0 +1,39 @@
+apiVersion: stream.space/v1alpha1
+kind: Template
+metadata:
+  name: pidgin
+  namespace: workspaces
+spec:
+  displayName: Pidgin
+  description: '[Pidgin] is a chat program which lets you log into accounts on multiple
+    chat networks simultaneously. This means that you can be chatting with friends
+    on XMPP and sitting in an IRC channel at the same time.'
+  category: IRC,Chat
+  icon: https://raw.githubusercontent.com/linuxserver/docker-templates/master/linuxserver.io/img/pidgin-logo.png
+  baseImage: lscr.io/linuxserver/pidgin:latest
+  defaultResources:
+    memory: 2Gi
+    cpu: 1000m
+  ports:
+  - name: http
+    containerPort: 8080
+    protocol: TCP
+  env:
+  - name: PUID
+    value: '1000'
+  - name: PGID
+    value: '1000'
+  - name: TZ
+    value: America/New_York
+  volumeMounts:
+  - name: user-home
+    mountPath: /config
+  kasmvnc:
+    enabled: false
+    port: 8080
+  capabilities:
+  - Network
+  - Clipboard
+  tags:
+  - pidgin
+  - irc,chat

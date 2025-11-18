@@ -4,8 +4,10 @@ metadata:
   name: calligra
   namespace: workspaces
 spec:
-  displayName: Calligra Suite
-  description: Integrated office suite with word processor, spreadsheet, presentation, vector graphics, and project management applications.
+  displayName: Calligra
+  description: '[Calligra] is an office and graphic art suite by KDE. It is available
+    for desktop PCs, tablet computers, and smartphones. It contains applications for
+    word processing, spreadsheets, presentation, vector graphics, and editing databases.'
   category: Productivity
   icon: https://raw.githubusercontent.com/linuxserver/docker-templates/master/linuxserver.io/img/calligra-logo.png
   baseImage: lscr.io/linuxserver/calligra:latest
@@ -13,26 +15,25 @@ spec:
     memory: 3Gi
     cpu: 1500m
   ports:
-    - name: vnc
-      containerPort: 3000
-      protocol: TCP
+  - name: vnc
+    containerPort: 3000
+    protocol: TCP
   env:
-    - name: PUID
-      value: "1000"
-    - name: PGID
-      value: "1000"
-    - name: TZ
-      value: "America/New_York"
+  - name: PUID
+    value: '1000'
+  - name: PGID
+    value: '1000'
+  - name: TZ
+    value: America/New_York
   volumeMounts:
-    - name: user-home
-      mountPath: /config
+  - name: user-home
+    mountPath: /config
   kasmvnc:
     enabled: true
     port: 3000
   capabilities:
-    - Clipboard
+  - Network
+  - Clipboard
   tags:
-    - office
-    - productivity
-    - documents
-    - kde
+  - calligra
+  - productivity

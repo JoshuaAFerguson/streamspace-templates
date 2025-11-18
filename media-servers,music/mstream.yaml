@@ -1,0 +1,39 @@
+apiVersion: stream.space/v1alpha1
+kind: Template
+metadata:
+  name: mstream
+  namespace: workspaces
+spec:
+  displayName: Mstream
+  description: mstream is a personal music streaming server. You can use mStream to
+    stream your music from your home computer to any device, anywhere.  There are
+    mobile apps available for both Android and iPhone.
+  category: Media Servers,Music
+  icon: https://raw.githubusercontent.com/linuxserver/docker-templates/master/linuxserver.io/img/mstream-logo.png
+  baseImage: lscr.io/linuxserver/mstream:latest
+  defaultResources:
+    memory: 2Gi
+    cpu: 1000m
+  ports:
+  - name: http
+    containerPort: 8080
+    protocol: TCP
+  env:
+  - name: PUID
+    value: '1000'
+  - name: PGID
+    value: '1000'
+  - name: TZ
+    value: America/New_York
+  volumeMounts:
+  - name: user-home
+    mountPath: /config
+  kasmvnc:
+    enabled: false
+    port: 8080
+  capabilities:
+  - Network
+  - Clipboard
+  tags:
+  - mstream
+  - media servers,music

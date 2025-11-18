@@ -1,0 +1,42 @@
+apiVersion: stream.space/v1alpha1
+kind: Template
+metadata:
+  name: apprise-api
+  namespace: workspaces
+spec:
+  displayName: Apprise-Api
+  description: apprise-api Takes advantage of [Apprise](https://github.com/caronc/apprise)
+    through your network with a user-friendly API.  * Send notifications to more than
+    100 services. * An incredibly lightweight gateway to Apprise. * A production ready
+    micro-service at your disposal. * A Simple Website to verify and test your configuration
+    with.  Apprise API was designed to easily fit into existing (and new) eco-systems
+    that are looking for a simple notification solution.
+  category: Monitoring
+  icon: https://raw.githubusercontent.com/linuxserver/docker-templates/master/linuxserver.io/img/apprise-api-logo.png
+  baseImage: lscr.io/linuxserver/apprise-api:latest
+  defaultResources:
+    memory: 2Gi
+    cpu: 1000m
+  ports:
+  - name: http
+    containerPort: 8080
+    protocol: TCP
+  env:
+  - name: PUID
+    value: '1000'
+  - name: PGID
+    value: '1000'
+  - name: TZ
+    value: America/New_York
+  volumeMounts:
+  - name: user-home
+    mountPath: /config
+  kasmvnc:
+    enabled: false
+    port: 8080
+  capabilities:
+  - Network
+  - Clipboard
+  tags:
+  - apprise-api
+  - monitoring

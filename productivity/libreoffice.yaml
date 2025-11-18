@@ -4,8 +4,10 @@ metadata:
   name: libreoffice
   namespace: workspaces
 spec:
-  displayName: LibreOffice Suite
-  description: Complete office productivity suite including Writer, Calc, Impress, Draw, and Base. Compatible with Microsoft Office formats.
+  displayName: Libreoffice
+  description: '[LibreOffice] is a free and powerful office suite, and a successor
+    to OpenOffice.org (commonly known as OpenOffice). Its clean interface and feature-rich
+    tools help you unleash your creativity and enhance your productivity.'
   category: Productivity
   icon: https://raw.githubusercontent.com/linuxserver/docker-templates/master/linuxserver.io/img/libreoffice-logo.png
   baseImage: lscr.io/linuxserver/libreoffice:latest
@@ -13,27 +15,25 @@ spec:
     memory: 3Gi
     cpu: 1500m
   ports:
-    - name: vnc
-      containerPort: 3000
-      protocol: TCP
+  - name: vnc
+    containerPort: 3000
+    protocol: TCP
   env:
-    - name: PUID
-      value: "1000"
-    - name: PGID
-      value: "1000"
-    - name: TZ
-      value: "America/New_York"
+  - name: PUID
+    value: '1000'
+  - name: PGID
+    value: '1000'
+  - name: TZ
+    value: America/New_York
   volumeMounts:
-    - name: user-home
-      mountPath: /config
+  - name: user-home
+    mountPath: /config
   kasmvnc:
     enabled: true
     port: 3000
   capabilities:
-    - Clipboard
+  - Network
+  - Clipboard
   tags:
-    - office
-    - productivity
-    - documents
-    - spreadsheets
-    - presentations
+  - libreoffice
+  - productivity

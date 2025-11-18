@@ -1,0 +1,38 @@
+apiVersion: stream.space/v1alpha1
+kind: Template
+metadata:
+  name: vscodium
+  namespace: workspaces
+spec:
+  displayName: Vscodium
+  description: "[VSCodium] is a community-driven, freely-licensed binary distribution\
+    \ of Microsoft\u2019s editor VS Code."
+  category: Development
+  icon: https://raw.githubusercontent.com/linuxserver/docker-templates/master/linuxserver.io/img/vscodium-logo.png
+  baseImage: lscr.io/linuxserver/vscodium:latest
+  defaultResources:
+    memory: 4Gi
+    cpu: 2000m
+  ports:
+  - name: http
+    containerPort: 8080
+    protocol: TCP
+  env:
+  - name: PUID
+    value: '1000'
+  - name: PGID
+    value: '1000'
+  - name: TZ
+    value: America/New_York
+  volumeMounts:
+  - name: user-home
+    mountPath: /config
+  kasmvnc:
+    enabled: false
+    port: 8080
+  capabilities:
+  - Network
+  - Clipboard
+  tags:
+  - vscodium
+  - development

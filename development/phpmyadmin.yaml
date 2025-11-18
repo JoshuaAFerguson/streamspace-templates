@@ -1,0 +1,39 @@
+apiVersion: stream.space/v1alpha1
+kind: Template
+metadata:
+  name: phpmyadmin
+  namespace: workspaces
+spec:
+  displayName: Phpmyadmin
+  description: phpmyadmin is a free software tool written in PHP, intended to handle
+    the administration of MySQL over the Web. phpMyAdmin supports a wide range of
+    operations on MySQL and MariaDB.
+  category: Development
+  icon: https://raw.githubusercontent.com/linuxserver/docker-templates/master/linuxserver.io/img/phpmyadmin-logo.png
+  baseImage: lscr.io/linuxserver/phpmyadmin:latest
+  defaultResources:
+    memory: 4Gi
+    cpu: 2000m
+  ports:
+  - name: http
+    containerPort: 8080
+    protocol: TCP
+  env:
+  - name: PUID
+    value: '1000'
+  - name: PGID
+    value: '1000'
+  - name: TZ
+    value: America/New_York
+  volumeMounts:
+  - name: user-home
+    mountPath: /config
+  kasmvnc:
+    enabled: false
+    port: 8080
+  capabilities:
+  - Network
+  - Clipboard
+  tags:
+  - phpmyadmin
+  - development

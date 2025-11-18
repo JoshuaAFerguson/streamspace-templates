@@ -1,0 +1,38 @@
+apiVersion: stream.space/v1alpha1
+kind: Template
+metadata:
+  name: smokeping
+  namespace: workspaces
+spec:
+  displayName: Smokeping
+  description: smokeping keeps track of your network latency. For a full example of
+    what this application is capable of visit [UCDavis](http://smokeping.ucdavis.edu/cgi-bin/smokeping.fcgi).
+  category: Monitoring
+  icon: https://raw.githubusercontent.com/linuxserver/docker-templates/master/linuxserver.io/img/smokeping-logo.png
+  baseImage: lscr.io/linuxserver/smokeping:latest
+  defaultResources:
+    memory: 2Gi
+    cpu: 1000m
+  ports:
+  - name: http
+    containerPort: 8080
+    protocol: TCP
+  env:
+  - name: PUID
+    value: '1000'
+  - name: PGID
+    value: '1000'
+  - name: TZ
+    value: America/New_York
+  volumeMounts:
+  - name: user-home
+    mountPath: /config
+  kasmvnc:
+    enabled: false
+    port: 8080
+  capabilities:
+  - Network
+  - Clipboard
+  tags:
+  - smokeping
+  - monitoring

@@ -1,0 +1,39 @@
+apiVersion: stream.space/v1alpha1
+kind: Template
+metadata:
+  name: homeassistant
+  namespace: workspaces
+spec:
+  displayName: Homeassistant
+  description: '[Home Assistant Core] - Open source home automation that puts local
+    control and privacy first. Powered by a worldwide community of tinkerers and DIY
+    enthusiasts. Perfect to run on a Raspberry Pi or a local server'
+  category: Automation
+  icon: https://raw.githubusercontent.com/linuxserver/docker-templates/master/linuxserver.io/img/homeassistant-logo.png
+  baseImage: lscr.io/linuxserver/homeassistant:latest
+  defaultResources:
+    memory: 2Gi
+    cpu: 1000m
+  ports:
+  - name: http
+    containerPort: 8080
+    protocol: TCP
+  env:
+  - name: PUID
+    value: '1000'
+  - name: PGID
+    value: '1000'
+  - name: TZ
+    value: America/New_York
+  volumeMounts:
+  - name: user-home
+    mountPath: /config
+  kasmvnc:
+    enabled: false
+    port: 8080
+  capabilities:
+  - Network
+  - Clipboard
+  tags:
+  - homeassistant
+  - automation

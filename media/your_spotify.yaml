@@ -1,0 +1,40 @@
+apiVersion: stream.space/v1alpha1
+kind: Template
+metadata:
+  name: your_spotify
+  namespace: workspaces
+spec:
+  displayName: Your_Spotify
+  description: your_spotify is a self-hosted application that tracks what you listen
+    and offers you a dashboard to explore statistics about it! It's composed of a
+    web server which polls the Spotify API every now and then and a web application
+    on which you can explore your statistics.
+  category: Media
+  icon: https://raw.githubusercontent.com/linuxserver/docker-templates/master/linuxserver.io/img/your_spotify-logo.png
+  baseImage: lscr.io/linuxserver/your_spotify:latest
+  defaultResources:
+    memory: 2Gi
+    cpu: 1000m
+  ports:
+  - name: http
+    containerPort: 8080
+    protocol: TCP
+  env:
+  - name: PUID
+    value: '1000'
+  - name: PGID
+    value: '1000'
+  - name: TZ
+    value: America/New_York
+  volumeMounts:
+  - name: user-home
+    mountPath: /config
+  kasmvnc:
+    enabled: false
+    port: 8080
+  capabilities:
+  - Network
+  - Clipboard
+  tags:
+  - your_spotify
+  - media

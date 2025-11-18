@@ -1,0 +1,40 @@
+apiVersion: stream.space/v1alpha1
+kind: Template
+metadata:
+  name: mysql-workbench
+  namespace: workspaces
+spec:
+  displayName: Mysql-Workbench
+  description: '[MySQL Workbench] is a unified visual tool for database architects,
+    developers, and DBAs. MySQL Workbench provides data modeling, SQL development,
+    and comprehensive administration tools for server configuration, user administration,
+    backup, and much more.'
+  category: Development
+  icon: https://raw.githubusercontent.com/linuxserver/docker-templates/master/linuxserver.io/img/mysql-workbench-logo.png
+  baseImage: lscr.io/linuxserver/mysql-workbench:latest
+  defaultResources:
+    memory: 4Gi
+    cpu: 2000m
+  ports:
+  - name: http
+    containerPort: 8080
+    protocol: TCP
+  env:
+  - name: PUID
+    value: '1000'
+  - name: PGID
+    value: '1000'
+  - name: TZ
+    value: America/New_York
+  volumeMounts:
+  - name: user-home
+    mountPath: /config
+  kasmvnc:
+    enabled: false
+    port: 8080
+  capabilities:
+  - Network
+  - Clipboard
+  tags:
+  - mysql-workbench
+  - development
