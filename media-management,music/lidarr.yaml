@@ -1,0 +1,40 @@
+apiVersion: stream.space/v1alpha1
+kind: Template
+metadata:
+  name: lidarr
+  namespace: workspaces
+spec:
+  displayName: Lidarr
+  description: lidarr is a music collection manager for Usenet and BitTorrent users.
+    It can monitor multiple RSS feeds for new tracks from your favorite artists and
+    will grab, sort and rename them. It can also be configured to automatically upgrade
+    the quality of files already downloaded when a better quality format becomes available.
+  category: Media Management,Music
+  icon: https://raw.githubusercontent.com/linuxserver/docker-templates/master/linuxserver.io/img/lidarr-logo.png
+  baseImage: lscr.io/linuxserver/lidarr:latest
+  defaultResources:
+    memory: 2Gi
+    cpu: 1000m
+  ports:
+  - name: http
+    containerPort: 8080
+    protocol: TCP
+  env:
+  - name: PUID
+    value: '1000'
+  - name: PGID
+    value: '1000'
+  - name: TZ
+    value: America/New_York
+  volumeMounts:
+  - name: user-home
+    mountPath: /config
+  kasmvnc:
+    enabled: false
+    port: 8080
+  capabilities:
+  - Network
+  - Clipboard
+  tags:
+  - lidarr
+  - media management,music

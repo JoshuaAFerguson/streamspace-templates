@@ -1,0 +1,39 @@
+apiVersion: stream.space/v1alpha1
+kind: Template
+metadata:
+  name: kavita
+  namespace: workspaces
+spec:
+  displayName: Kavita
+  description: kavita is a fast, feature rich, cross platform reading server. Built
+    with a focus for being a full solution for all your reading needs. Setup your
+    own server and share your reading collection with your friends and family!
+  category: Productivity
+  icon: https://raw.githubusercontent.com/linuxserver/docker-templates/master/linuxserver.io/img/kavita-logo.png
+  baseImage: lscr.io/linuxserver/kavita:latest
+  defaultResources:
+    memory: 3Gi
+    cpu: 1500m
+  ports:
+  - name: vnc
+    containerPort: 3000
+    protocol: TCP
+  env:
+  - name: PUID
+    value: '1000'
+  - name: PGID
+    value: '1000'
+  - name: TZ
+    value: America/New_York
+  volumeMounts:
+  - name: user-home
+    mountPath: /config
+  kasmvnc:
+    enabled: true
+    port: 3000
+  capabilities:
+  - Network
+  - Clipboard
+  tags:
+  - kavita
+  - productivity

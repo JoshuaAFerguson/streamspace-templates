@@ -1,0 +1,40 @@
+apiVersion: stream.space/v1alpha1
+kind: Template
+metadata:
+  name: rsnapshot
+  namespace: workspaces
+spec:
+  displayName: Rsnapshot
+  description: rsnapshot is a filesystem snapshot utility based on rsync. rsnapshot
+    makes it easy to make periodic snapshots of local machines, and remote machines
+    over ssh. The code makes extensive use of hard links whenever possible, to greatly
+    reduce the disk space required.
+  category: Backup
+  icon: https://raw.githubusercontent.com/linuxserver/docker-templates/master/linuxserver.io/img/rsnapshot-logo.png
+  baseImage: lscr.io/linuxserver/rsnapshot:latest
+  defaultResources:
+    memory: 2Gi
+    cpu: 1000m
+  ports:
+  - name: http
+    containerPort: 8080
+    protocol: TCP
+  env:
+  - name: PUID
+    value: '1000'
+  - name: PGID
+    value: '1000'
+  - name: TZ
+    value: America/New_York
+  volumeMounts:
+  - name: user-home
+    mountPath: /config
+  kasmvnc:
+    enabled: false
+    port: 8080
+  capabilities:
+  - Network
+  - Clipboard
+  tags:
+  - rsnapshot
+  - backup

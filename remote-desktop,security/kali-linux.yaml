@@ -1,0 +1,39 @@
+apiVersion: stream.space/v1alpha1
+kind: Template
+metadata:
+  name: kali-linux
+  namespace: workspaces
+spec:
+  displayName: Kali-Linux
+  description: "kali-linux - is an Advanced Penetration Testing Linux distribution\
+    \ used for Penetration Testing, Ethical Hacking and network security assessments.\
+    \ KALI LINUX \u2122 is a trademark of OffSec."
+  category: Remote Desktop,Security
+  icon: https://raw.githubusercontent.com/linuxserver/docker-templates/master/linuxserver.io/img/kali-linux-logo.png
+  baseImage: lscr.io/linuxserver/kali-linux:latest
+  defaultResources:
+    memory: 2Gi
+    cpu: 1000m
+  ports:
+  - name: http
+    containerPort: 8080
+    protocol: TCP
+  env:
+  - name: PUID
+    value: '1000'
+  - name: PGID
+    value: '1000'
+  - name: TZ
+    value: America/New_York
+  volumeMounts:
+  - name: user-home
+    mountPath: /config
+  kasmvnc:
+    enabled: false
+    port: 8080
+  capabilities:
+  - Network
+  - Clipboard
+  tags:
+  - kali-linux
+  - remote desktop,security

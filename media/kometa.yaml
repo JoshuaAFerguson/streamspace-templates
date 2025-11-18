@@ -1,0 +1,39 @@
+apiVersion: stream.space/v1alpha1
+kind: Template
+metadata:
+  name: kometa
+  namespace: workspaces
+spec:
+  displayName: Kometa
+  description: kometa is a powerful tool designed to give you complete control over
+    your media libraries. With kometa, you can take your customization to the next
+    level, with granular control over metadata, collections, overlays, and much more.
+  category: Media
+  icon: https://raw.githubusercontent.com/linuxserver/docker-templates/master/linuxserver.io/img/kometa-logo.png
+  baseImage: lscr.io/linuxserver/kometa:latest
+  defaultResources:
+    memory: 2Gi
+    cpu: 1000m
+  ports:
+  - name: http
+    containerPort: 8080
+    protocol: TCP
+  env:
+  - name: PUID
+    value: '1000'
+  - name: PGID
+    value: '1000'
+  - name: TZ
+    value: America/New_York
+  volumeMounts:
+  - name: user-home
+    mountPath: /config
+  kasmvnc:
+    enabled: false
+    port: 8080
+  capabilities:
+  - Network
+  - Clipboard
+  tags:
+  - kometa
+  - media

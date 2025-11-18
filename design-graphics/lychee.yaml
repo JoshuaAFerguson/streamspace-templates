@@ -1,0 +1,40 @@
+apiVersion: stream.space/v1alpha1
+kind: Template
+metadata:
+  name: lychee
+  namespace: workspaces
+spec:
+  displayName: Lychee
+  description: lychee is a free photo-management tool, which runs on your server or
+    web-space. Installing is a matter of seconds. Upload, manage and share photos
+    like from a native application. Lychee comes with everything you need and all
+    your photos are stored securely.
+  category: Design & Graphics
+  icon: https://raw.githubusercontent.com/linuxserver/docker-templates/master/linuxserver.io/img/lychee-logo.png
+  baseImage: lscr.io/linuxserver/lychee:latest
+  defaultResources:
+    memory: 4Gi
+    cpu: 2000m
+  ports:
+  - name: vnc
+    containerPort: 3000
+    protocol: TCP
+  env:
+  - name: PUID
+    value: '1000'
+  - name: PGID
+    value: '1000'
+  - name: TZ
+    value: America/New_York
+  volumeMounts:
+  - name: user-home
+    mountPath: /config
+  kasmvnc:
+    enabled: true
+    port: 3000
+  capabilities:
+  - Network
+  - Clipboard
+  tags:
+  - lychee
+  - design & graphics

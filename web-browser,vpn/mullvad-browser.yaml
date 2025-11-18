@@ -1,0 +1,40 @@
+apiVersion: stream.space/v1alpha1
+kind: Template
+metadata:
+  name: mullvad-browser
+  namespace: workspaces
+spec:
+  displayName: Mullvad-Browser
+  description: "The [Mullvad Browser] is a privacy-focused web browser developed in\
+    \ a collaboration between Mullvad VPN and the Tor Project. It\u2019s designed\
+    \ to minimize tracking and fingerprinting. You could say it\u2019s a Tor Browser\
+    \ to use without the Tor Network. Instead, you can use it with a trustworthy VPN."
+  category: Web Browser,VPN
+  icon: https://raw.githubusercontent.com/linuxserver/docker-templates/master/linuxserver.io/img/mullvad-browser-logo.png
+  baseImage: lscr.io/linuxserver/mullvad-browser:latest
+  defaultResources:
+    memory: 2Gi
+    cpu: 1000m
+  ports:
+  - name: http
+    containerPort: 8080
+    protocol: TCP
+  env:
+  - name: PUID
+    value: '1000'
+  - name: PGID
+    value: '1000'
+  - name: TZ
+    value: America/New_York
+  volumeMounts:
+  - name: user-home
+    mountPath: /config
+  kasmvnc:
+    enabled: false
+    port: 8080
+  capabilities:
+  - Network
+  - Clipboard
+  tags:
+  - mullvad-browser
+  - web browser,vpn

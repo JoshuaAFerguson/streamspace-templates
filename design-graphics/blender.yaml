@@ -1,0 +1,41 @@
+apiVersion: stream.space/v1alpha1
+kind: Template
+metadata:
+  name: blender
+  namespace: workspaces
+spec:
+  displayName: Blender
+  description: '[Blender] is a free and open-source 3D computer graphics software
+    toolset used for creating animated films, visual effects, art, 3D printed models,
+    motion graphics, interactive 3D applications, virtual reality, and computer games.
+    **This image does not support GPU rendering out of the box only accelerated workspace
+    experience**'
+  category: Design & Graphics
+  icon: https://raw.githubusercontent.com/linuxserver/docker-templates/master/linuxserver.io/img/blender-logo.png
+  baseImage: lscr.io/linuxserver/blender:latest
+  defaultResources:
+    memory: 4Gi
+    cpu: 2000m
+  ports:
+  - name: vnc
+    containerPort: 3000
+    protocol: TCP
+  env:
+  - name: PUID
+    value: '1000'
+  - name: PGID
+    value: '1000'
+  - name: TZ
+    value: America/New_York
+  volumeMounts:
+  - name: user-home
+    mountPath: /config
+  kasmvnc:
+    enabled: true
+    port: 3000
+  capabilities:
+  - Network
+  - Clipboard
+  tags:
+  - blender
+  - design & graphics

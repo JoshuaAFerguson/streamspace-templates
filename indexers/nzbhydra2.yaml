@@ -1,0 +1,39 @@
+apiVersion: stream.space/v1alpha1
+kind: Template
+metadata:
+  name: nzbhydra2
+  namespace: workspaces
+spec:
+  displayName: Nzbhydra2
+  description: nzbhydra2 is a meta search application for NZB indexers, the spiritual
+    successor to NZBmegasearcH, and an evolution of the original application [NZBHydra](https://github.com/theotherp/nzbhydra).  It
+    provides easy access to a number of raw and newznab based indexers.
+  category: Indexers
+  icon: https://raw.githubusercontent.com/linuxserver/docker-templates/master/linuxserver.io/img/nzbhydra2-logo.png
+  baseImage: lscr.io/linuxserver/nzbhydra2:latest
+  defaultResources:
+    memory: 2Gi
+    cpu: 1000m
+  ports:
+  - name: http
+    containerPort: 8080
+    protocol: TCP
+  env:
+  - name: PUID
+    value: '1000'
+  - name: PGID
+    value: '1000'
+  - name: TZ
+    value: America/New_York
+  volumeMounts:
+  - name: user-home
+    mountPath: /config
+  kasmvnc:
+    enabled: false
+    port: 8080
+  capabilities:
+  - Network
+  - Clipboard
+  tags:
+  - nzbhydra2
+  - indexers

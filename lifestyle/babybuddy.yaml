@@ -1,0 +1,39 @@
+apiVersion: stream.space/v1alpha1
+kind: Template
+metadata:
+  name: babybuddy
+  namespace: workspaces
+spec:
+  displayName: Babybuddy
+  description: babybuddy is a buddy for babies! Helps caregivers track sleep, feedings,
+    diaper changes, tummy time and more to learn about and predict baby's needs without
+    (as much) guess work.
+  category: Lifestyle
+  icon: https://raw.githubusercontent.com/linuxserver/docker-templates/master/linuxserver.io/img/babybuddy-logo.png
+  baseImage: lscr.io/linuxserver/babybuddy:latest
+  defaultResources:
+    memory: 2Gi
+    cpu: 1000m
+  ports:
+  - name: http
+    containerPort: 8080
+    protocol: TCP
+  env:
+  - name: PUID
+    value: '1000'
+  - name: PGID
+    value: '1000'
+  - name: TZ
+    value: America/New_York
+  volumeMounts:
+  - name: user-home
+    mountPath: /config
+  kasmvnc:
+    enabled: false
+    port: 8080
+  capabilities:
+  - Network
+  - Clipboard
+  tags:
+  - babybuddy
+  - lifestyle

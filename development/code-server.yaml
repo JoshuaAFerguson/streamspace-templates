@@ -4,8 +4,14 @@ metadata:
   name: code-server
   namespace: workspaces
 spec:
-  displayName: VS Code Server
-  description: Full Visual Studio Code IDE accessible via web browser. Supports extensions, debugging, and integrated terminal.
+  displayName: Code-Server
+  description: code-server is VS Code running on a remote server, accessible through
+    the browser. - Code on your Chromebook, tablet, and laptop with a consistent dev
+    environment. - If you have a Windows or Mac workstation, more easily develop for
+    Linux. - Take advantage of large cloud servers to speed up tests, compilations,
+    downloads, and more. - Preserve battery life when you're on the go. - All intensive
+    computation runs on your server. - You're no longer running excess instances of
+    Chrome.
   category: Development
   icon: https://raw.githubusercontent.com/linuxserver/docker-templates/master/linuxserver.io/img/code-server-logo.png
   baseImage: lscr.io/linuxserver/code-server:latest
@@ -13,29 +19,25 @@ spec:
     memory: 4Gi
     cpu: 2000m
   ports:
-    - name: http
-      containerPort: 8443
-      protocol: TCP
+  - name: http
+    containerPort: 8080
+    protocol: TCP
   env:
-    - name: PUID
-      value: "1000"
-    - name: PGID
-      value: "1000"
-    - name: TZ
-      value: "America/New_York"
-    - name: DEFAULT_WORKSPACE
-      value: /config/workspace
+  - name: PUID
+    value: '1000'
+  - name: PGID
+    value: '1000'
+  - name: TZ
+    value: America/New_York
   volumeMounts:
-    - name: user-home
-      mountPath: /config
+  - name: user-home
+    mountPath: /config
   kasmvnc:
-    enabled: false  # Code-server has its own web interface
+    enabled: false
+    port: 8080
   capabilities:
-    - Network
-    - Clipboard
+  - Network
+  - Clipboard
   tags:
-    - development
-    - ide
-    - vscode
-    - coding
-    - programming
+  - code-server
+  - development

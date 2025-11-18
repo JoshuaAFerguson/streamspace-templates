@@ -1,0 +1,40 @@
+apiVersion: stream.space/v1alpha1
+kind: Template
+metadata:
+  name: sabnzbd
+  namespace: workspaces
+spec:
+  displayName: Sabnzbd
+  description: sabnzbd makes Usenet as simple and streamlined as possible by automating
+    everything we can. All you have to do is add an .nzb. SABnzbd takes over from
+    there, where it will be automatically downloaded, verified, repaired, extracted
+    and filed away with zero human interaction.
+  category: File Management
+  icon: https://raw.githubusercontent.com/linuxserver/docker-templates/master/linuxserver.io/img/sabnzbd-logo.png
+  baseImage: lscr.io/linuxserver/sabnzbd:latest
+  defaultResources:
+    memory: 2Gi
+    cpu: 1000m
+  ports:
+  - name: http
+    containerPort: 8080
+    protocol: TCP
+  env:
+  - name: PUID
+    value: '1000'
+  - name: PGID
+    value: '1000'
+  - name: TZ
+    value: America/New_York
+  volumeMounts:
+  - name: user-home
+    mountPath: /config
+  kasmvnc:
+    enabled: false
+    port: 8080
+  capabilities:
+  - Network
+  - Clipboard
+  tags:
+  - sabnzbd
+  - file management

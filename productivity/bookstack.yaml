@@ -1,0 +1,42 @@
+apiVersion: stream.space/v1alpha1
+kind: Template
+metadata:
+  name: bookstack
+  namespace: workspaces
+spec:
+  displayName: Bookstack
+  description: 'bookstack is a free and open source Wiki designed for creating beautiful
+    documentation. Featuring a simple, but powerful WYSIWYG editor it allows for teams
+    to create detailed and useful documentation with ease.  Powered by SQL and including
+    a Markdown editor for those who prefer it, BookStack is geared towards making
+    documentation more of a pleasure than a chore.  For more information on BookStack
+    visit their website and check it out: https://www.bookstackapp.com'
+  category: Productivity
+  icon: https://raw.githubusercontent.com/linuxserver/docker-templates/master/linuxserver.io/img/bookstack-logo.png
+  baseImage: lscr.io/linuxserver/bookstack:latest
+  defaultResources:
+    memory: 3Gi
+    cpu: 1500m
+  ports:
+  - name: vnc
+    containerPort: 3000
+    protocol: TCP
+  env:
+  - name: PUID
+    value: '1000'
+  - name: PGID
+    value: '1000'
+  - name: TZ
+    value: America/New_York
+  volumeMounts:
+  - name: user-home
+    mountPath: /config
+  kasmvnc:
+    enabled: true
+    port: 3000
+  capabilities:
+  - Network
+  - Clipboard
+  tags:
+  - bookstack
+  - productivity

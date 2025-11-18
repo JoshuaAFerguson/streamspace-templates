@@ -6,6 +6,8 @@ Official application template repository for [StreamSpace](https://github.com/Jo
 
 This repository contains Kubernetes CRD manifests for StreamSpace application templates. Templates define containerized applications that users can launch as streaming sessions.
 
+**Current Status**: 195 templates across 50 categories, all sourced from the [LinuxServer.io](https://www.linuxserver.io/) catalog.
+
 ## Repository Structure
 
 ```
@@ -23,41 +25,21 @@ streamspace-templates/
 
 ## Template Categories
 
-### Web Browsers (4 templates)
-- **Firefox**: Modern, privacy-focused web browser
-- **Chromium**: Open-source web browser
-- **Brave**: Privacy-focused browser with ad blocking
-- **LibreWolf**: Security-focused Firefox fork
+This repository now includes **195 templates** across **50 categories**. See [TEMPLATES.md](TEMPLATES.md) for the complete catalog.
 
-### Development (3 templates)
-- **VS Code**: Visual Studio Code IDE
-- **GitHub Desktop**: Git GUI client
-- **Sublime Text**: Lightweight code editor
+### Popular Categories
 
-### Productivity (3 templates)
-- **LibreOffice**: Complete office suite
-- **Calligra**: KDE office suite
-- **OnlyOffice**: Modern office suite
+- **Web Browsers** (14): Firefox, Chrome, Chromium, Brave, LibreWolf, Opera, Vivaldi, and more
+- **Development** (10): VS Code, VSCodium, GitHub Desktop, MariaDB, MySQL Workbench
+- **Productivity** (22): LibreOffice, OnlyOffice, Calibre, Joplin, Obsidian, Zotero
+- **Design & Graphics** (21): GIMP, Krita, Inkscape, Blender, FreeCAD, KiCad, Darktable
+- **Audio & Video** (15): Audacity, Kdenlive, Ardour, Shotcut, FFmpeg
+- **Gaming** (13): DuckStation, Dolphin, RetroArch, PCSX2, RPCS3, MAME
+- **Media** (14): Sonarr, Radarr, Bazarr, Jellyfin, Plex, Emby
+- **File Management** (9): qBittorrent, Deluge, FileZilla, SABnzbd
+- **Desktop Environments** (3): Ubuntu (XFCE/KDE), Alpine (i3)
 
-### Design (5 templates)
-- **GIMP**: Image editing
-- **Krita**: Digital painting
-- **Inkscape**: Vector graphics
-- **Blender**: 3D creation suite
-- **darktable**: Photo workflow
-
-### Media (2 templates)
-- **Audacity**: Audio editing
-- **Kdenlive**: Video editing
-
-### Gaming (2 templates)
-- **DuckStation**: PlayStation emulator
-- **Dolphin**: GameCube/Wii emulator
-
-### Webtop (3 templates)
-- **Ubuntu Webtop**: Ubuntu with XFCE desktop
-- **Alpine Webtop**: Lightweight Alpine desktop
-- **Arch Webtop**: Arch Linux desktop
+See [TEMPLATES.md](TEMPLATES.md) for the complete list of all templates.
 
 ## Usage
 
@@ -172,9 +154,23 @@ kubectl apply --dry-run=client -f your-template.yaml
 kubectl apply --server-dry-run -f your-template.yaml
 ```
 
+## Template Generation
+
+This repository uses automated scripts to generate templates from the LinuxServer.io catalog:
+
+```bash
+# Generate all templates from LinuxServer.io API
+python3 scripts/generate-templates.py
+
+# Generate from curated popular apps list
+python3 scripts/generate-from-catalog.py
+```
+
+See [scripts/README.md](scripts/README.md) for detailed documentation.
+
 ## Current Images Status
 
-⚠️ **Note**: Current templates use LinuxServer.io images. StreamSpace is migrating to native container images with TigerVNC + noVNC in future releases for complete open source independence.
+⚠️ **Note**: All templates use LinuxServer.io images. StreamSpace may migrate to native container images with TigerVNC + noVNC in future releases for complete open source independence.
 
 ## License
 

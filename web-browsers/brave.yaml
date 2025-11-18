@@ -1,0 +1,38 @@
+apiVersion: stream.space/v1alpha1
+kind: Template
+metadata:
+  name: brave
+  namespace: workspaces
+spec:
+  displayName: Brave
+  description: '[The Brave browser] is a fast, private and secure web browser for
+    PC, Mac and mobile.'
+  category: Web Browsers
+  icon: https://raw.githubusercontent.com/linuxserver/docker-templates/master/linuxserver.io/img/brave-logo.png
+  baseImage: lscr.io/linuxserver/brave:latest
+  defaultResources:
+    memory: 2Gi
+    cpu: 1000m
+  ports:
+  - name: vnc
+    containerPort: 3000
+    protocol: TCP
+  env:
+  - name: PUID
+    value: '1000'
+  - name: PGID
+    value: '1000'
+  - name: TZ
+    value: America/New_York
+  volumeMounts:
+  - name: user-home
+    mountPath: /config
+  kasmvnc:
+    enabled: true
+    port: 3000
+  capabilities:
+  - Network
+  - Clipboard
+  tags:
+  - brave
+  - web browsers

@@ -1,0 +1,41 @@
+apiVersion: stream.space/v1alpha1
+kind: Template
+metadata:
+  name: remmina
+  namespace: workspaces
+spec:
+  displayName: Remmina
+  description: '[Remmina] is a remote desktop client written in GTK, aiming to be
+    useful for system administrators and travellers, who need to work with lots of
+    remote computers in front of either large or tiny screens. Remmina supports multiple
+    network protocols, in an integrated and consistent user interface. Currently RDP,
+    VNC, SPICE, SSH and EXEC are supported.'
+  category: Remote Desktop
+  icon: https://raw.githubusercontent.com/linuxserver/docker-templates/master/linuxserver.io/img/remmina-logo.png
+  baseImage: lscr.io/linuxserver/remmina:latest
+  defaultResources:
+    memory: 2Gi
+    cpu: 1000m
+  ports:
+  - name: vnc
+    containerPort: 3000
+    protocol: TCP
+  env:
+  - name: PUID
+    value: '1000'
+  - name: PGID
+    value: '1000'
+  - name: TZ
+    value: America/New_York
+  volumeMounts:
+  - name: user-home
+    mountPath: /config
+  kasmvnc:
+    enabled: true
+    port: 3000
+  capabilities:
+  - Network
+  - Clipboard
+  tags:
+  - remmina
+  - remote desktop

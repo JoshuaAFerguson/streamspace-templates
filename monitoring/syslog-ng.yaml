@@ -1,0 +1,39 @@
+apiVersion: stream.space/v1alpha1
+kind: Template
+metadata:
+  name: syslog-ng
+  namespace: workspaces
+spec:
+  displayName: Syslog-Ng
+  description: '[syslog-ng] allows you to flexibly collect, parse, classify, rewrite
+    and correlate logs from across your infrastructure and store or route them to
+    log analysis tools.'
+  category: Monitoring
+  icon: https://raw.githubusercontent.com/linuxserver/docker-templates/master/linuxserver.io/img/syslog-ng-logo.png
+  baseImage: lscr.io/linuxserver/syslog-ng:latest
+  defaultResources:
+    memory: 2Gi
+    cpu: 1000m
+  ports:
+  - name: http
+    containerPort: 8080
+    protocol: TCP
+  env:
+  - name: PUID
+    value: '1000'
+  - name: PGID
+    value: '1000'
+  - name: TZ
+    value: America/New_York
+  volumeMounts:
+  - name: user-home
+    mountPath: /config
+  kasmvnc:
+    enabled: false
+    port: 8080
+  capabilities:
+  - Network
+  - Clipboard
+  tags:
+  - syslog-ng
+  - monitoring

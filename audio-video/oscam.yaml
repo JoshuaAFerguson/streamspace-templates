@@ -1,0 +1,38 @@
+apiVersion: stream.space/v1alpha1
+kind: Template
+metadata:
+  name: oscam
+  namespace: workspaces
+spec:
+  displayName: Oscam
+  description: oscam is an Open Source Conditional Access Module software used for
+    descrambling DVB transmissions using smart cards. It's both a server and a client.
+  category: Audio & Video
+  icon: https://raw.githubusercontent.com/linuxserver/docker-templates/master/linuxserver.io/img/oscam-logo.png
+  baseImage: lscr.io/linuxserver/oscam:latest
+  defaultResources:
+    memory: 3Gi
+    cpu: 1500m
+  ports:
+  - name: http
+    containerPort: 8080
+    protocol: TCP
+  env:
+  - name: PUID
+    value: '1000'
+  - name: PGID
+    value: '1000'
+  - name: TZ
+    value: America/New_York
+  volumeMounts:
+  - name: user-home
+    mountPath: /config
+  kasmvnc:
+    enabled: false
+    port: 8080
+  capabilities:
+  - Network
+  - Clipboard
+  tags:
+  - oscam
+  - audio & video

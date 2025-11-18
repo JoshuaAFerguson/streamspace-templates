@@ -1,0 +1,41 @@
+apiVersion: stream.space/v1alpha1
+kind: Template
+metadata:
+  name: duplicati
+  namespace: workspaces
+spec:
+  displayName: Duplicati
+  description: duplicati is a backup client that securely stores encrypted, incremental,
+    compressed backups on local storage, cloud storage services and remote file servers.
+    It works with standard protocols like FTP, SSH, WebDAV as well as popular services
+    like Microsoft OneDrive, Amazon S3, Google Drive, box.com, Mega, B2, and many
+    others.
+  category: Backup
+  icon: https://raw.githubusercontent.com/linuxserver/docker-templates/master/linuxserver.io/img/duplicati-logo.png
+  baseImage: lscr.io/linuxserver/duplicati:latest
+  defaultResources:
+    memory: 2Gi
+    cpu: 1000m
+  ports:
+  - name: http
+    containerPort: 8080
+    protocol: TCP
+  env:
+  - name: PUID
+    value: '1000'
+  - name: PGID
+    value: '1000'
+  - name: TZ
+    value: America/New_York
+  volumeMounts:
+  - name: user-home
+    mountPath: /config
+  kasmvnc:
+    enabled: false
+    port: 8080
+  capabilities:
+  - Network
+  - Clipboard
+  tags:
+  - duplicati
+  - backup

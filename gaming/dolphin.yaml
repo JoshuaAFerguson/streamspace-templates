@@ -1,40 +1,38 @@
 apiVersion: stream.space/v1alpha1
 kind: Template
 metadata:
-  name: dolphin-emulator
+  name: dolphin
   namespace: workspaces
 spec:
-  displayName: Dolphin Emulator
-  description: GameCube and Wii emulator with high compatibility and performance. Supports HD graphics, save states, and controller configuration.
+  displayName: Dolphin
+  description: '[Dolphin Emulator] lets you play GameCube and Wii games with various
+    graphical enhancements and other features are available to improve your game experience.'
   category: Gaming
   icon: https://raw.githubusercontent.com/linuxserver/docker-templates/master/linuxserver.io/img/dolphin-logo.png
   baseImage: lscr.io/linuxserver/dolphin:latest
   defaultResources:
     memory: 4Gi
-    cpu: 2500m
+    cpu: 2000m
   ports:
-    - name: vnc
-      containerPort: 3000
-      protocol: TCP
+  - name: vnc
+    containerPort: 3000
+    protocol: TCP
   env:
-    - name: PUID
-      value: "1000"
-    - name: PGID
-      value: "1000"
-    - name: TZ
-      value: "America/New_York"
+  - name: PUID
+    value: '1000'
+  - name: PGID
+    value: '1000'
+  - name: TZ
+    value: America/New_York
   volumeMounts:
-    - name: user-home
-      mountPath: /config
+  - name: user-home
+    mountPath: /config
   kasmvnc:
     enabled: true
     port: 3000
   capabilities:
-    - Audio
-    - Clipboard
+  - Network
+  - Clipboard
   tags:
-    - gaming
-    - emulator
-    - gamecube
-    - wii
-    - nintendo
+  - dolphin
+  - gaming

@@ -1,0 +1,39 @@
+apiVersion: stream.space/v1alpha1
+kind: Template
+metadata:
+  name: openshot
+  namespace: workspaces
+spec:
+  displayName: Openshot
+  description: '[OpenShot] Video Editor is an award-winning free and open-source video
+    editor for Linux, Mac, and Windows, and is dedicated to delivering high quality
+    video editing and animation solutions to the world.'
+  category: Audio & Video
+  icon: https://raw.githubusercontent.com/linuxserver/docker-templates/master/linuxserver.io/img/openshot-logo.png
+  baseImage: lscr.io/linuxserver/openshot:latest
+  defaultResources:
+    memory: 3Gi
+    cpu: 1500m
+  ports:
+  - name: http
+    containerPort: 8080
+    protocol: TCP
+  env:
+  - name: PUID
+    value: '1000'
+  - name: PGID
+    value: '1000'
+  - name: TZ
+    value: America/New_York
+  volumeMounts:
+  - name: user-home
+    mountPath: /config
+  kasmvnc:
+    enabled: false
+    port: 8080
+  capabilities:
+  - Network
+  - Clipboard
+  tags:
+  - openshot
+  - audio & video

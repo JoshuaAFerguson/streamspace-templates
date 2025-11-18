@@ -1,0 +1,39 @@
+apiVersion: stream.space/v1alpha1
+kind: Template
+metadata:
+  name: pairdrop
+  namespace: workspaces
+spec:
+  displayName: Pairdrop
+  description: '[PairDrop] is a sublime alternative to AirDrop that works on all platforms.
+    Send images, documents or text via peer to peer connection to devices in the same
+    local network/Wi-Fi or to paired devices.'
+  category: File Sharing
+  icon: https://raw.githubusercontent.com/linuxserver/docker-templates/master/linuxserver.io/img/pairdrop-logo.png
+  baseImage: lscr.io/linuxserver/pairdrop:latest
+  defaultResources:
+    memory: 2Gi
+    cpu: 1000m
+  ports:
+  - name: http
+    containerPort: 8080
+    protocol: TCP
+  env:
+  - name: PUID
+    value: '1000'
+  - name: PGID
+    value: '1000'
+  - name: TZ
+    value: America/New_York
+  volumeMounts:
+  - name: user-home
+    mountPath: /config
+  kasmvnc:
+    enabled: false
+    port: 8080
+  capabilities:
+  - Network
+  - Clipboard
+  tags:
+  - pairdrop
+  - file sharing

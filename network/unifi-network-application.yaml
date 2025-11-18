@@ -1,0 +1,39 @@
+apiVersion: stream.space/v1alpha1
+kind: Template
+metadata:
+  name: unifi-network-application
+  namespace: workspaces
+spec:
+  displayName: Unifi-Network-Application
+  description: The unifi-network-application software is a powerful, enterprise wireless
+    software engine ideal for high-density client deployments requiring low latency
+    and high uptime performance.
+  category: Network
+  icon: https://raw.githubusercontent.com/linuxserver/docker-templates/master/linuxserver.io/img/unifi-network-application-logo.png
+  baseImage: lscr.io/linuxserver/unifi-network-application:latest
+  defaultResources:
+    memory: 2Gi
+    cpu: 1000m
+  ports:
+  - name: http
+    containerPort: 8080
+    protocol: TCP
+  env:
+  - name: PUID
+    value: '1000'
+  - name: PGID
+    value: '1000'
+  - name: TZ
+    value: America/New_York
+  volumeMounts:
+  - name: user-home
+    mountPath: /config
+  kasmvnc:
+    enabled: false
+    port: 8080
+  capabilities:
+  - Network
+  - Clipboard
+  tags:
+  - unifi-network-application
+  - network

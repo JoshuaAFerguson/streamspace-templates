@@ -1,0 +1,38 @@
+apiVersion: stream.space/v1alpha1
+kind: Template
+metadata:
+  name: ffmpeg
+  namespace: workspaces
+spec:
+  displayName: Ffmpeg
+  description: A complete, cross-platform solution to record, convert and stream audio
+    and video.
+  category: Audio & Video
+  icon: https://raw.githubusercontent.com/linuxserver/docker-templates/master/linuxserver.io/img/ffmpeg-logo.png
+  baseImage: lscr.io/linuxserver/ffmpeg:latest
+  defaultResources:
+    memory: 3Gi
+    cpu: 1500m
+  ports:
+  - name: http
+    containerPort: 8080
+    protocol: TCP
+  env:
+  - name: PUID
+    value: '1000'
+  - name: PGID
+    value: '1000'
+  - name: TZ
+    value: America/New_York
+  volumeMounts:
+  - name: user-home
+    mountPath: /config
+  kasmvnc:
+    enabled: false
+    port: 8080
+  capabilities:
+  - Network
+  - Clipboard
+  tags:
+  - ffmpeg
+  - audio & video

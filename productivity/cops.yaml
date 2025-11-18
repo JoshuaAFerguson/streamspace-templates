@@ -1,0 +1,43 @@
+apiVersion: stream.space/v1alpha1
+kind: Template
+metadata:
+  name: cops
+  namespace: workspaces
+spec:
+  displayName: Cops
+  description: "cops by S\xE9bastien Lucas, now maintained by MikesPub, stands for\
+    \ Calibre OPDS (and HTML) Php Server.  COPS links to your Calibre library database\
+    \ and allows downloading and emailing of books directly from a web browser and\
+    \ provides a OPDS feed to connect to your devices.  Changes in your Calibre library\
+    \ are reflected immediately in your COPS pages.  See : [COPS's home] for more\
+    \ details.  Don't forget to check the [Wiki](https://github.com/mikespub-org/seblucas-cops/wiki).\
+    \  ## Why? (taken from the"
+  category: Productivity
+  icon: https://raw.githubusercontent.com/linuxserver/docker-templates/master/linuxserver.io/img/cops-logo.png
+  baseImage: lscr.io/linuxserver/cops:latest
+  defaultResources:
+    memory: 3Gi
+    cpu: 1500m
+  ports:
+  - name: vnc
+    containerPort: 3000
+    protocol: TCP
+  env:
+  - name: PUID
+    value: '1000'
+  - name: PGID
+    value: '1000'
+  - name: TZ
+    value: America/New_York
+  volumeMounts:
+  - name: user-home
+    mountPath: /config
+  kasmvnc:
+    enabled: true
+    port: 3000
+  capabilities:
+  - Network
+  - Clipboard
+  tags:
+  - cops
+  - productivity

@@ -1,0 +1,39 @@
+apiVersion: stream.space/v1alpha1
+kind: Template
+metadata:
+  name: dogwalk
+  namespace: workspaces
+spec:
+  displayName: Dogwalk
+  description: '[DOGWALK] is Blender Studio''s long awaited second game project, focused
+    on creating a bite-sized interactive storytelling playground. Play as a big adorable
+    dog and explore the winter woods with a little kid.'
+  category: Gaming
+  icon: https://raw.githubusercontent.com/linuxserver/docker-templates/master/linuxserver.io/img/dogwalk-logo.png
+  baseImage: lscr.io/linuxserver/dogwalk:latest
+  defaultResources:
+    memory: 4Gi
+    cpu: 2000m
+  ports:
+  - name: vnc
+    containerPort: 3000
+    protocol: TCP
+  env:
+  - name: PUID
+    value: '1000'
+  - name: PGID
+    value: '1000'
+  - name: TZ
+    value: America/New_York
+  volumeMounts:
+  - name: user-home
+    mountPath: /config
+  kasmvnc:
+    enabled: true
+    port: 3000
+  capabilities:
+  - Network
+  - Clipboard
+  tags:
+  - dogwalk
+  - gaming

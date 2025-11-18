@@ -1,0 +1,40 @@
+apiVersion: stream.space/v1alpha1
+kind: Template
+metadata:
+  name: mediaelch
+  namespace: workspaces
+spec:
+  displayName: Mediaelch
+  description: '[MediaElch] is a MediaManager for Kodi. Information about Movies,
+    TV Shows, Concerts and Music are stored as nfo files. Fanarts are downloaded automatically
+    from fanart.tv. Using the nfo generator, MediaElch can be used with other MediaCenters
+    as well.'
+  category: Media
+  icon: https://raw.githubusercontent.com/linuxserver/docker-templates/master/linuxserver.io/img/mediaelch-logo.png
+  baseImage: lscr.io/linuxserver/mediaelch:latest
+  defaultResources:
+    memory: 2Gi
+    cpu: 1000m
+  ports:
+  - name: http
+    containerPort: 8080
+    protocol: TCP
+  env:
+  - name: PUID
+    value: '1000'
+  - name: PGID
+    value: '1000'
+  - name: TZ
+    value: America/New_York
+  volumeMounts:
+  - name: user-home
+    mountPath: /config
+  kasmvnc:
+    enabled: false
+    port: 8080
+  capabilities:
+  - Network
+  - Clipboard
+  tags:
+  - mediaelch
+  - media

@@ -1,0 +1,42 @@
+apiVersion: stream.space/v1alpha1
+kind: Template
+metadata:
+  name: foldingathome
+  namespace: workspaces
+spec:
+  displayName: Foldingathome
+  description: '[Folding@home] is a distributed computing project for simulating protein
+    dynamics, including the process of protein folding and the movements of proteins
+    implicated in a variety of diseases. It brings together citizen scientists who
+    volunteer to run simulations of protein dynamics on their personal computers.
+    Insights from this data are helping scientists to better understand biology, and
+    providing new opportunities for developing therapeutics.'
+  category: Science & Education
+  icon: https://raw.githubusercontent.com/linuxserver/docker-templates/master/linuxserver.io/img/foldingathome-logo.png
+  baseImage: lscr.io/linuxserver/foldingathome:latest
+  defaultResources:
+    memory: 2Gi
+    cpu: 1000m
+  ports:
+  - name: http
+    containerPort: 8080
+    protocol: TCP
+  env:
+  - name: PUID
+    value: '1000'
+  - name: PGID
+    value: '1000'
+  - name: TZ
+    value: America/New_York
+  volumeMounts:
+  - name: user-home
+    mountPath: /config
+  kasmvnc:
+    enabled: false
+    port: 8080
+  capabilities:
+  - Network
+  - Clipboard
+  tags:
+  - foldingathome
+  - science & education

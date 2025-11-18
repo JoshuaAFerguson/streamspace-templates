@@ -1,0 +1,43 @@
+apiVersion: stream.space/v1alpha1
+kind: Template
+metadata:
+  name: ombi
+  namespace: workspaces
+spec:
+  displayName: Ombi
+  description: ombi allows you to host your own Plex Request and user management system.
+    If you are sharing your Plex server with other users, allow them to request new
+    content using an easy to manage interface! Manage all your requests for Movies
+    and TV with ease, leave notes for the user and get notification when a user requests
+    something. Allow your users to post issues against their requests so you know
+    there is a problem with the audio etc. Even automatically send them weekly newsletters
+    of new content th
+  category: Media
+  icon: https://raw.githubusercontent.com/linuxserver/docker-templates/master/linuxserver.io/img/ombi-logo.png
+  baseImage: lscr.io/linuxserver/ombi:latest
+  defaultResources:
+    memory: 2Gi
+    cpu: 1000m
+  ports:
+  - name: http
+    containerPort: 8080
+    protocol: TCP
+  env:
+  - name: PUID
+    value: '1000'
+  - name: PGID
+    value: '1000'
+  - name: TZ
+    value: America/New_York
+  volumeMounts:
+  - name: user-home
+    mountPath: /config
+  kasmvnc:
+    enabled: false
+    port: 8080
+  capabilities:
+  - Network
+  - Clipboard
+  tags:
+  - ombi
+  - media

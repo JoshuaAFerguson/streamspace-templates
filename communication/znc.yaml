@@ -1,0 +1,40 @@
+apiVersion: stream.space/v1alpha1
+kind: Template
+metadata:
+  name: znc
+  namespace: workspaces
+spec:
+  displayName: Znc
+  description: znc is an IRC network bouncer or BNC. It can detach the client from
+    the actual IRC server, and also from selected channels. Multiple clients from
+    different locations can connect to a single ZNC account simultaneously and therefore
+    appear under the same nickname on IRC.
+  category: Communication
+  icon: https://raw.githubusercontent.com/linuxserver/docker-templates/master/linuxserver.io/img/znc-logo.png
+  baseImage: lscr.io/linuxserver/znc:latest
+  defaultResources:
+    memory: 2Gi
+    cpu: 1000m
+  ports:
+  - name: http
+    containerPort: 8080
+    protocol: TCP
+  env:
+  - name: PUID
+    value: '1000'
+  - name: PGID
+    value: '1000'
+  - name: TZ
+    value: America/New_York
+  volumeMounts:
+  - name: user-home
+    mountPath: /config
+  kasmvnc:
+    enabled: false
+    port: 8080
+  capabilities:
+  - Network
+  - Clipboard
+  tags:
+  - znc
+  - communication

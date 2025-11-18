@@ -1,0 +1,38 @@
+apiVersion: stream.space/v1alpha1
+kind: Template
+metadata:
+  name: ferdium
+  namespace: workspaces
+spec:
+  displayName: Ferdium
+  description: '[Ferdium] is a desktop app that helps you organize how you use your
+    favourite apps by combining them into one application.'
+  category: Chat,Social
+  icon: https://raw.githubusercontent.com/linuxserver/docker-templates/master/linuxserver.io/img/ferdium-logo.png
+  baseImage: lscr.io/linuxserver/ferdium:latest
+  defaultResources:
+    memory: 2Gi
+    cpu: 1000m
+  ports:
+  - name: vnc
+    containerPort: 3000
+    protocol: TCP
+  env:
+  - name: PUID
+    value: '1000'
+  - name: PGID
+    value: '1000'
+  - name: TZ
+    value: America/New_York
+  volumeMounts:
+  - name: user-home
+    mountPath: /config
+  kasmvnc:
+    enabled: true
+    port: 3000
+  capabilities:
+  - Network
+  - Clipboard
+  tags:
+  - ferdium
+  - chat,social

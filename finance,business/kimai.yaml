@@ -1,0 +1,43 @@
+apiVersion: stream.space/v1alpha1
+kind: Template
+metadata:
+  name: kimai
+  namespace: workspaces
+spec:
+  displayName: Kimai
+  description: 'kimai is a professional grade time-tracking application, free and
+    open-source. It handles use-cases of freelancers as well as companies with dozens
+    or hundreds of users. Kimai was build to track your project times and ships with
+    many advanced features, including but not limited to:  JSON API, invoicing, data
+    exports, multi-timer and punch-in punch-out mode, tagging, multi-user - multi-timezones
+    - multi-language ([over 30 translations existing](https://hosted.weblate.org/projects/kimai/)!),
+    authe'
+  category: Finance,Business
+  icon: https://raw.githubusercontent.com/linuxserver/docker-templates/master/linuxserver.io/img/kimai-logo.png
+  baseImage: lscr.io/linuxserver/kimai:latest
+  defaultResources:
+    memory: 2Gi
+    cpu: 1000m
+  ports:
+  - name: http
+    containerPort: 8080
+    protocol: TCP
+  env:
+  - name: PUID
+    value: '1000'
+  - name: PGID
+    value: '1000'
+  - name: TZ
+    value: America/New_York
+  volumeMounts:
+  - name: user-home
+    mountPath: /config
+  kasmvnc:
+    enabled: false
+    port: 8080
+  capabilities:
+  - Network
+  - Clipboard
+  tags:
+  - kimai
+  - finance,business
