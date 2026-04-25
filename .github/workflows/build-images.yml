@@ -1,0 +1,184 @@
+name: Build & Publish Container Images
+
+on:
+  push:
+    branches:
+      - main
+    tags:
+      - 'v*'
+    paths:
+      - 'images/**'
+      - '.github/workflows/build-images.yml'
+  pull_request:
+    branches:
+      - main
+    paths:
+      - 'images/**'
+      - '.github/workflows/build-images.yml'
+  workflow_dispatch:
+    inputs:
+      image:
+        description: 'Image directory under images/ to build (leave blank for all)'
+        required: false
+        default: ''
+
+env:
+  REGISTRY: ghcr.io
+  IMAGE_PREFIX: ghcr.io/${{ github.repository_owner }}
+
+permissions:
+  contents: read
+  packages: write
+  id-token: write       # for cosign keyless signing
+  attestations: write   # for build provenance
+
+jobs:
+  discover:
+    name: Discover images to build
+    runs-on: ubuntu-latest
+    outputs:
+      matrix: ${{ steps.matrix.outputs.matrix }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 2  # need previous commit to diff against on push
+
+      - name: Build matrix from images/ subdirs
+        id: matrix
+        env:
+          MANUAL_IMAGE: ${{ github.event.inputs.image }}
+          EVENT_NAME: ${{ github.event_name }}
+          BASE_SHA: ${{ github.event.pull_request.base.sha || github.event.before }}
+        run: |
+          set -euo pipefail
+          images=()
+
+          if [ -n "${MANUAL_IMAGE}" ]; then
+            # workflow_dispatch with explicit name
+            if [ -d "images/${MANUAL_IMAGE}" ]; then
+              images+=("${MANUAL_IMAGE}")
+            else
+              echo "::error::images/${MANUAL_IMAGE} does not exist"
+              exit 1
+            fi
+          elif [ "${EVENT_NAME}" = "pull_request" ] || [ "${EVENT_NAME}" = "push" ]; then
+            # only rebuild images whose subdirectory changed
+            changed=$(git diff --name-only "${BASE_SHA}" HEAD -- 'images/**' || true)
+            for dir in $(echo "${changed}" | awk -F/ 'NF>=2 && $1=="images" {print $2}' | sort -u); do
+              if [ -f "images/${dir}/Dockerfile" ]; then
+                images+=("${dir}")
+              fi
+            done
+          else
+            # tag push or workflow_dispatch with no name → build everything
+            for dir in images/*/; do
+              name="${dir%/}"; name="${name#images/}"
+              if [ -f "images/${name}/Dockerfile" ]; then
+                images+=("${name}")
+              fi
+            done
+          fi
+
+          if [ ${#images[@]} -eq 0 ]; then
+            echo "matrix={\"image\":[]}" >> "${GITHUB_OUTPUT}"
+            echo "No images to build"
+            exit 0
+          fi
+
+          json=$(printf '%s\n' "${images[@]}" | jq -Rsc 'split("\n")|map(select(length>0))|{image:.}')
+          echo "matrix=${json}" >> "${GITHUB_OUTPUT}"
+          echo "Building: ${images[*]}"
+
+  build:
+    name: Build ${{ matrix.image }}
+    needs: discover
+    if: needs.discover.outputs.matrix != '{"image":[]}'
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix: ${{ fromJSON(needs.discover.outputs.matrix) }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up QEMU
+        uses: docker/setup-qemu-action@v3
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: Log in to GHCR
+        if: github.event_name != 'pull_request'
+        uses: docker/login-action@v3
+        with:
+          registry: ${{ env.REGISTRY }}
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Install cosign
+        if: github.event_name != 'pull_request'
+        uses: sigstore/cosign-installer@v3
+        with:
+          cosign-release: 'v2.4.1'
+
+      - name: Extract metadata
+        id: meta
+        uses: docker/metadata-action@v5
+        with:
+          images: ${{ env.IMAGE_PREFIX }}/${{ matrix.image }}
+          tags: |
+            type=ref,event=branch
+            type=ref,event=pr
+            type=semver,pattern={{version}}
+            type=semver,pattern={{major}}.{{minor}}
+            type=semver,pattern={{major}}
+            type=sha,prefix=sha-
+            type=raw,value=latest,enable={{is_default_branch}}
+
+      - name: Build and push
+        id: build
+        uses: docker/build-push-action@v5
+        with:
+          context: ./images/${{ matrix.image }}
+          file: ./images/${{ matrix.image }}/Dockerfile
+          platforms: linux/amd64,linux/arm64
+          push: ${{ github.event_name != 'pull_request' }}
+          tags: ${{ steps.meta.outputs.tags }}
+          labels: ${{ steps.meta.outputs.labels }}
+          cache-from: type=gha,scope=${{ matrix.image }}
+          cache-to: type=gha,mode=max,scope=${{ matrix.image }}
+          provenance: true
+          sbom: true
+
+      - name: Sign image with cosign (keyless)
+        if: github.event_name != 'pull_request'
+        env:
+          DIGEST: ${{ steps.build.outputs.digest }}
+          IMAGE: ${{ env.IMAGE_PREFIX }}/${{ matrix.image }}
+        run: |
+          set -euo pipefail
+          if [ -z "${DIGEST}" ]; then
+            echo "::error::Empty digest from build step"
+            exit 1
+          fi
+          cosign sign --yes "${IMAGE}@${DIGEST}"
+
+      - name: Generate SBOM
+        if: github.event_name != 'pull_request'
+        uses: anchore/sbom-action@v0
+        with:
+          image: ${{ env.IMAGE_PREFIX }}/${{ matrix.image }}@${{ steps.build.outputs.digest }}
+          artifact-name: ${{ matrix.image }}-sbom.spdx.json
+          format: spdx-json
+
+      - name: Attach SBOM as cosign attestation
+        if: github.event_name != 'pull_request'
+        env:
+          DIGEST: ${{ steps.build.outputs.digest }}
+          IMAGE: ${{ env.IMAGE_PREFIX }}/${{ matrix.image }}
+          SBOM_NAME: ${{ matrix.image }}-sbom.spdx.json
+        run: |
+          set -euo pipefail
+          cosign attest --yes \
+            --type spdxjson \
+            --predicate "${SBOM_NAME}" \
+            "${IMAGE}@${DIGEST}"
