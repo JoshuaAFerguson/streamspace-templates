@@ -1,0 +1,52 @@
+# Chrome browser streamed via Selkies-GStreamer (WebRTC).
+#
+# Image source:    images/chrome-selkies/Dockerfile (this repo)
+# Built image:     ghcr.io/streamspace-dev/chrome-selkies:latest
+# Streaming port:  8080 (Selkies HTTP/WebRTC)
+---
+apiVersion: stream.space/v1alpha1
+kind: Template
+metadata:
+  name: chrome-selkies
+  namespace: workspaces
+  labels:
+    app.kubernetes.io/name: chrome-selkies
+    app.kubernetes.io/component: template
+    streamspace.io/category: web-browsers
+    streamspace.io/streaming-protocol: selkies
+spec:
+  displayName: Google Chrome
+  description: Chrome browser streamed via Selkies-GStreamer (WebRTC).
+  category: Web Browsers
+  icon: https://raw.githubusercontent.com/streamspace-dev/streamspace/main/ui/public/icons/chrome.svg
+  baseImage: ghcr.io/streamspace-dev/chrome-selkies:latest
+  streamingProtocol: selkies
+  defaultResources:
+    requests:
+      memory: 2Gi
+      cpu: 1000m
+    limits:
+      memory: 2Gi
+      cpu: 2000m
+  ports:
+    - name: selkies
+      containerPort: 8080
+      protocol: TCP
+  env:
+    - name: TZ
+      value: UTC
+    - name: DISPLAY_SIZEW
+      value: "1920"
+    - name: DISPLAY_SIZEH
+      value: "1080"
+    - name: SELKIES_ENABLE_AUDIO
+      value: "true"
+  capabilities:
+    - Network
+    - Audio
+    - Clipboard
+  tags:
+    - browser
+    - web
+    - chrome
+    - selkies
