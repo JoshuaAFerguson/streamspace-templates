@@ -130,7 +130,10 @@ jobs:
         uses: docker/setup-buildx-action@v3
 
       - name: Log in to GHCR
-        if: github.event_name != 'pull_request'
+        # Log in for every event so derived images can pull their base
+        # from ghcr.io during the docker build step. PR builds still skip
+        # the push (see `push:` arg on docker/build-push-action below);
+        # GITHUB_TOKEN is read-only for fork PRs anyway.
         uses: docker/login-action@v3
         with:
           registry: ${{ env.REGISTRY }}
