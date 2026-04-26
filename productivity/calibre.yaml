@@ -3,6 +3,8 @@ kind: Template
 metadata:
   name: calibre
   namespace: workspaces
+  annotations:
+    streamspace.dev/image-status: pending-migration
 spec:
   displayName: Calibre
   description: calibre is a powerful and easy to use e-book manager. Users say it's
@@ -10,7 +12,6 @@ spec:
     things a step beyond normal e-book software. It's also completely free and open
     source and great for both casual users and computer experts.
   category: Productivity
-  icon: https://raw.githubusercontent.com/linuxserver/docker-templates/master/linuxserver.io/img/calibre-logo.png
   baseImage: lscr.io/linuxserver/calibre:latest
   defaultResources:
     memory: 3Gi
@@ -29,9 +30,6 @@ spec:
   volumeMounts:
   - name: user-home
     mountPath: /config
-  kasmvnc:
-    enabled: true
-    port: 3000
   capabilities:
   - Network
   - Clipboard

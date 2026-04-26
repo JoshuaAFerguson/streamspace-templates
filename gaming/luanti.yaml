@@ -3,12 +3,13 @@ kind: Template
 metadata:
   name: luanti
   namespace: workspaces
+  annotations:
+    streamspace.dev/image-status: pending-migration
 spec:
   displayName: Luanti
   description: luanti (formerly Minetest) is an open source voxel game-creation platform
     with easy modding and game creation
   category: Gaming
-  icon: https://raw.githubusercontent.com/linuxserver/docker-templates/master/linuxserver.io/img/luanti-logo.png
   baseImage: lscr.io/linuxserver/luanti:latest
   defaultResources:
     memory: 4Gi
@@ -27,9 +28,6 @@ spec:
   volumeMounts:
   - name: user-home
     mountPath: /config
-  kasmvnc:
-    enabled: true
-    port: 3000
   capabilities:
   - Network
   - Clipboard

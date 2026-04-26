@@ -3,12 +3,13 @@ kind: Template
 metadata:
   name: kdenlive
   namespace: workspaces
+  annotations:
+    streamspace.dev/image-status: pending-migration
 spec:
   displayName: Kdenlive
-  description: '[Kdenlive] is a powerful free and open source cross-platform video
-    editing program made by the KDE community. Feature rich and production ready.'
+  description: Kdenlive is a powerful free and open source cross-platform video editing
+    program made by the KDE community. Feature rich and production ready.
   category: Audio & Video
-  icon: https://raw.githubusercontent.com/linuxserver/docker-templates/master/linuxserver.io/img/kdenlive-logo.png
   baseImage: lscr.io/linuxserver/kdenlive:latest
   defaultResources:
     memory: 3Gi
@@ -27,12 +28,9 @@ spec:
   volumeMounts:
   - name: user-home
     mountPath: /config
-  kasmvnc:
-    enabled: false
-    port: 8080
   capabilities:
   - Network
   - Clipboard
   tags:
   - kdenlive
-  - audio & video
+  - audio--video

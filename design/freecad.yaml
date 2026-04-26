@@ -3,13 +3,14 @@ kind: Template
 metadata:
   name: freecad
   namespace: workspaces
+  annotations:
+    streamspace.dev/image-status: pending-migration
 spec:
   displayName: Freecad
-  description: '[FreeCAD] is a general-purpose parametric 3D computer-aided design
-    (CAD) modeler and a building information modeling (BIM) software application with
-    finite element method (FEM) support.'
+  description: FreeCAD is a general-purpose parametric 3D computer-aided design (CAD)
+    modeler and a building information modeling (BIM) software application with finite
+    element method (FEM) support.
   category: Design & Graphics
-  icon: https://raw.githubusercontent.com/linuxserver/docker-templates/master/linuxserver.io/img/freecad-logo.png
   baseImage: lscr.io/linuxserver/freecad:latest
   defaultResources:
     memory: 4Gi
@@ -28,12 +29,9 @@ spec:
   volumeMounts:
   - name: user-home
     mountPath: /config
-  kasmvnc:
-    enabled: true
-    port: 3000
   capabilities:
   - Network
   - Clipboard
   tags:
   - freecad
-  - design & graphics
+  - design--graphics

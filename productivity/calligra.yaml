@@ -3,13 +3,14 @@ kind: Template
 metadata:
   name: calligra
   namespace: workspaces
+  annotations:
+    streamspace.dev/image-status: pending-migration
 spec:
   displayName: Calligra
-  description: '[Calligra] is an office and graphic art suite by KDE. It is available
+  description: Calligra is an office and graphic art suite by KDE. It is available
     for desktop PCs, tablet computers, and smartphones. It contains applications for
-    word processing, spreadsheets, presentation, vector graphics, and editing databases.'
+    word processing, spreadsheets, presentation, vector graphics, and editing databases.
   category: Productivity
-  icon: https://raw.githubusercontent.com/linuxserver/docker-templates/master/linuxserver.io/img/calligra-logo.png
   baseImage: lscr.io/linuxserver/calligra:latest
   defaultResources:
     memory: 3Gi
@@ -28,9 +29,6 @@ spec:
   volumeMounts:
   - name: user-home
     mountPath: /config
-  kasmvnc:
-    enabled: true
-    port: 3000
   capabilities:
   - Network
   - Clipboard

@@ -3,12 +3,13 @@ kind: Template
 metadata:
   name: joplin
   namespace: workspaces
+  annotations:
+    streamspace.dev/image-status: pending-migration
 spec:
   displayName: Joplin
-  description: '[Joplin] is a free, open source note taking and to-do application,
-    which can handle a large number of notes organised into notebooks.'
+  description: Joplin is a free, open source note taking and to-do application, which
+    can handle a large number of notes organised into notebooks.
   category: Productivity
-  icon: https://raw.githubusercontent.com/linuxserver/docker-templates/master/linuxserver.io/img/joplin-logo.png
   baseImage: lscr.io/linuxserver/joplin:latest
   defaultResources:
     memory: 3Gi
@@ -27,9 +28,6 @@ spec:
   volumeMounts:
   - name: user-home
     mountPath: /config
-  kasmvnc:
-    enabled: true
-    port: 3000
   capabilities:
   - Network
   - Clipboard

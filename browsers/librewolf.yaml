@@ -3,14 +3,15 @@ kind: Template
 metadata:
   name: librewolf
   namespace: workspaces
+  annotations:
+    streamspace.dev/image-status: pending-migration
 spec:
   displayName: Librewolf
-  description: '[LibreWolf] is a custom and independent version of Firefox, with the
+  description: LibreWolf is a custom and independent version of Firefox, with the
     primary goals of privacy, security and user freedom. LibreWolf also aims to remove
     all the telemetry, data collection and annoyances, as well as disabling anti-freedom
-    features like DRM.'
+    features like DRM.
   category: Web Browsers
-  icon: https://raw.githubusercontent.com/linuxserver/docker-templates/master/linuxserver.io/img/librewolf-logo.png
   baseImage: lscr.io/linuxserver/librewolf:latest
   defaultResources:
     memory: 2Gi
@@ -29,12 +30,9 @@ spec:
   volumeMounts:
   - name: user-home
     mountPath: /config
-  kasmvnc:
-    enabled: true
-    port: 3000
   capabilities:
   - Network
   - Clipboard
   tags:
   - librewolf
-  - web browsers
+  - web-browsers

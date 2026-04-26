@@ -3,14 +3,15 @@ kind: Template
 metadata:
   name: steamos
   namespace: workspaces
+  annotations:
+    streamspace.dev/image-status: pending-migration
 spec:
   displayName: Steamos
-  description: '[SteamOS] is an Arch based Linux distribution made by Valve Software.
+  description: SteamOS is an Arch based Linux distribution made by Valve Software.
     This container is a vanilla Arch install with Steam repositories added for software
     support. **This container will only work with modern AMD/Intel GPUs on a real
-    Linux Host**'
+    Linux Host**
   category: Gaming
-  icon: https://raw.githubusercontent.com/linuxserver/docker-templates/master/linuxserver.io/img/steamos-logo.png
   baseImage: lscr.io/linuxserver/steamos:latest
   defaultResources:
     memory: 4Gi
@@ -29,9 +30,6 @@ spec:
   volumeMounts:
   - name: user-home
     mountPath: /config
-  kasmvnc:
-    enabled: true
-    port: 3000
   capabilities:
   - Network
   - Clipboard

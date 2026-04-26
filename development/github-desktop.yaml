@@ -3,12 +3,13 @@ kind: Template
 metadata:
   name: github-desktop
   namespace: workspaces
+  annotations:
+    streamspace.dev/image-status: pending-migration
 spec:
   displayName: Github-Desktop
-  description: '[Github Desktop] is an open source Electron-based GitHub app. It is
-    written in TypeScript and uses React.'
+  description: Github Desktop is an open source Electron-based GitHub app. It is written
+    in TypeScript and uses React.
   category: Development
-  icon: https://raw.githubusercontent.com/linuxserver/docker-templates/master/linuxserver.io/img/github-desktop-logo.png
   baseImage: lscr.io/linuxserver/github-desktop:latest
   defaultResources:
     memory: 4Gi
@@ -27,9 +28,6 @@ spec:
   volumeMounts:
   - name: user-home
     mountPath: /config
-  kasmvnc:
-    enabled: true
-    port: 3000
   capabilities:
   - Network
   - Clipboard

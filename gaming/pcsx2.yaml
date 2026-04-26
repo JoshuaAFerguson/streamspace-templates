@@ -3,11 +3,12 @@ kind: Template
 metadata:
   name: pcsx2
   namespace: workspaces
+  annotations:
+    streamspace.dev/image-status: pending-migration
 spec:
   displayName: Pcsx2
-  description: '[PCSX2] is an open source PS2 Emulator.'
+  description: PCSX2 is an open source PS2 Emulator.
   category: Gaming
-  icon: https://raw.githubusercontent.com/linuxserver/docker-templates/master/linuxserver.io/img/pcsx2-logo.png
   baseImage: lscr.io/linuxserver/pcsx2:latest
   defaultResources:
     memory: 4Gi
@@ -26,9 +27,6 @@ spec:
   volumeMounts:
   - name: user-home
     mountPath: /config
-  kasmvnc:
-    enabled: true
-    port: 3000
   capabilities:
   - Network
   - Clipboard

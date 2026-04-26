@@ -3,12 +3,13 @@ kind: Template
 metadata:
   name: qdirstat
   namespace: workspaces
+  annotations:
+    streamspace.dev/image-status: pending-migration
 spec:
   displayName: Qdirstat
-  description: '[QDirStat] Qt-based directory statistics: KDirStat without any KDE
-    -- from the author of the original KDirStat.'
+  description: 'QDirStat Qt-based directory statistics: KDirStat without any KDE --
+    from the author of the original KDirStat.'
   category: Storage
-  icon: https://raw.githubusercontent.com/linuxserver/docker-templates/master/linuxserver.io/img/qdirstat-logo.png
   baseImage: lscr.io/linuxserver/qdirstat:latest
   defaultResources:
     memory: 2Gi
@@ -27,9 +28,6 @@ spec:
   volumeMounts:
   - name: user-home
     mountPath: /config
-  kasmvnc:
-    enabled: false
-    port: 8080
   capabilities:
   - Network
   - Clipboard

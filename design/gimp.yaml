@@ -3,14 +3,15 @@ kind: Template
 metadata:
   name: gimp
   namespace: workspaces
+  annotations:
+    streamspace.dev/image-status: pending-migration
 spec:
   displayName: Gimp
-  description: '[GIMP] is a free and open-source raster graphics editor used for image
+  description: GIMP is a free and open-source raster graphics editor used for image
     manipulation (retouching) and image editing, free-form drawing, transcoding between
     different image file formats, and more specialized tasks. It is extensible by
-    means of plugins, and scriptable.'
+    means of plugins, and scriptable.
   category: Design & Graphics
-  icon: https://raw.githubusercontent.com/linuxserver/docker-templates/master/linuxserver.io/img/gimp-logo.png
   baseImage: lscr.io/linuxserver/gimp:latest
   defaultResources:
     memory: 4Gi
@@ -29,12 +30,9 @@ spec:
   volumeMounts:
   - name: user-home
     mountPath: /config
-  kasmvnc:
-    enabled: true
-    port: 3000
   capabilities:
   - Network
   - Clipboard
   tags:
   - gimp
-  - design & graphics
+  - design--graphics

@@ -3,12 +3,13 @@ kind: Template
 metadata:
   name: vscodium
   namespace: workspaces
+  annotations:
+    streamspace.dev/image-status: pending-migration
 spec:
   displayName: Vscodium
-  description: "[VSCodium] is a community-driven, freely-licensed binary distribution\
-    \ of Microsoft\u2019s editor VS Code."
+  description: VSCodium is a community-driven, freely-licensed binary distribution
+    of Microsoft’s editor VS Code.
   category: Development
-  icon: https://raw.githubusercontent.com/linuxserver/docker-templates/master/linuxserver.io/img/vscodium-logo.png
   baseImage: lscr.io/linuxserver/vscodium:latest
   defaultResources:
     memory: 4Gi
@@ -27,9 +28,6 @@ spec:
   volumeMounts:
   - name: user-home
     mountPath: /config
-  kasmvnc:
-    enabled: false
-    port: 8080
   capabilities:
   - Network
   - Clipboard

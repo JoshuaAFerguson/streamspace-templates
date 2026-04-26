@@ -3,13 +3,14 @@ kind: Template
 metadata:
   name: libreoffice
   namespace: workspaces
+  annotations:
+    streamspace.dev/image-status: pending-migration
 spec:
   displayName: Libreoffice
-  description: '[LibreOffice] is a free and powerful office suite, and a successor
-    to OpenOffice.org (commonly known as OpenOffice). Its clean interface and feature-rich
-    tools help you unleash your creativity and enhance your productivity.'
+  description: LibreOffice is a free and powerful office suite, and a successor to
+    OpenOffice.org (commonly known as OpenOffice). Its clean interface and feature-rich
+    tools help you unleash your creativity and enhance your productivity.
   category: Productivity
-  icon: https://raw.githubusercontent.com/linuxserver/docker-templates/master/linuxserver.io/img/libreoffice-logo.png
   baseImage: lscr.io/linuxserver/libreoffice:latest
   defaultResources:
     memory: 3Gi
@@ -28,9 +29,6 @@ spec:
   volumeMounts:
   - name: user-home
     mountPath: /config
-  kasmvnc:
-    enabled: true
-    port: 3000
   capabilities:
   - Network
   - Clipboard

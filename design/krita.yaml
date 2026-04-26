@@ -3,12 +3,13 @@ kind: Template
 metadata:
   name: krita
   namespace: workspaces
+  annotations:
+    streamspace.dev/image-status: pending-migration
 spec:
   displayName: Krita
-  description: '[Krita] is a professional FREE and open source painting program. It
-    is made by artists that want to see affordable art tools for everyone.'
+  description: Krita is a professional FREE and open source painting program. It is
+    made by artists that want to see affordable art tools for everyone.
   category: Design & Graphics
-  icon: https://raw.githubusercontent.com/linuxserver/docker-templates/master/linuxserver.io/img/krita-logo.png
   baseImage: lscr.io/linuxserver/krita:latest
   defaultResources:
     memory: 4Gi
@@ -27,12 +28,9 @@ spec:
   volumeMounts:
   - name: user-home
     mountPath: /config
-  kasmvnc:
-    enabled: true
-    port: 3000
   capabilities:
   - Network
   - Clipboard
   tags:
   - krita
-  - design & graphics
+  - design--graphics

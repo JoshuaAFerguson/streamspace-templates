@@ -3,11 +3,12 @@ kind: Template
 metadata:
   name: shotcut
   namespace: workspaces
+  annotations:
+    streamspace.dev/image-status: pending-migration
 spec:
   displayName: Shotcut
   description: shotcut is a free, open source, cross-platform video editor.
   category: Audio & Video
-  icon: https://raw.githubusercontent.com/linuxserver/docker-templates/master/linuxserver.io/img/shotcut-logo.png
   baseImage: lscr.io/linuxserver/shotcut:latest
   defaultResources:
     memory: 3Gi
@@ -26,12 +27,9 @@ spec:
   volumeMounts:
   - name: user-home
     mountPath: /config
-  kasmvnc:
-    enabled: false
-    port: 8080
   capabilities:
   - Network
   - Clipboard
   tags:
   - shotcut
-  - audio & video
+  - audio--video

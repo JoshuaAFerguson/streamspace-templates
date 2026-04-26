@@ -3,12 +3,13 @@ kind: Template
 metadata:
   name: ardour
   namespace: workspaces
+  annotations:
+    streamspace.dev/image-status: pending-migration
 spec:
   displayName: Ardour
-  description: '[Ardour] is an open source, collaborative effort of a worldwide team
-    including musicians, programmers, and professional recording engineers.'
+  description: Ardour is an open source, collaborative effort of a worldwide team
+    including musicians, programmers, and professional recording engineers.
   category: Audio & Video
-  icon: https://raw.githubusercontent.com/linuxserver/docker-templates/master/linuxserver.io/img/ardour-logo.png
   baseImage: lscr.io/linuxserver/ardour:latest
   defaultResources:
     memory: 3Gi
@@ -27,12 +28,9 @@ spec:
   volumeMounts:
   - name: user-home
     mountPath: /config
-  kasmvnc:
-    enabled: false
-    port: 8080
   capabilities:
   - Network
   - Clipboard
   tags:
   - ardour
-  - audio & video
+  - audio--video

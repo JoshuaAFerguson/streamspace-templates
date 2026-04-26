@@ -3,12 +3,13 @@ kind: Template
 metadata:
   name: zen
   namespace: workspaces
+  annotations:
+    streamspace.dev/image-status: pending-migration
 spec:
   displayName: Zen
-  description: '[Zen Browser] is a free and open-source fork of Mozilla Firefox with
-    a focus on privacy, customizability and design.'
+  description: Zen Browser is a free and open-source fork of Mozilla Firefox with
+    a focus on privacy, customizability and design.
   category: Web Browsers
-  icon: https://raw.githubusercontent.com/linuxserver/docker-templates/master/linuxserver.io/img/zen-logo.png
   baseImage: lscr.io/linuxserver/zen:latest
   defaultResources:
     memory: 2Gi
@@ -27,12 +28,9 @@ spec:
   volumeMounts:
   - name: user-home
     mountPath: /config
-  kasmvnc:
-    enabled: true
-    port: 3000
   capabilities:
   - Network
   - Clipboard
   tags:
   - zen
-  - web browsers
+  - web-browsers

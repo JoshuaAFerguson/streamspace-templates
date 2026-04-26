@@ -3,12 +3,13 @@ kind: Template
 metadata:
   name: msedge
   namespace: workspaces
+  annotations:
+    streamspace.dev/image-status: pending-migration
 spec:
   displayName: Msedge
-  description: '[Microsoft Edge] is a cross-platform web browser developed by Microsoft
-    and based on Chromium.'
+  description: Microsoft Edge is a cross-platform web browser developed by Microsoft
+    and based on Chromium.
   category: Web Browsers
-  icon: https://raw.githubusercontent.com/linuxserver/docker-templates/master/linuxserver.io/img/msedge-logo.png
   baseImage: lscr.io/linuxserver/msedge:latest
   defaultResources:
     memory: 2Gi
@@ -27,12 +28,9 @@ spec:
   volumeMounts:
   - name: user-home
     mountPath: /config
-  kasmvnc:
-    enabled: true
-    port: 3000
   capabilities:
   - Network
   - Clipboard
   tags:
   - msedge
-  - web browsers
+  - web-browsers
