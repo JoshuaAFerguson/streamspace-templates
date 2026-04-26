@@ -1,0 +1,48 @@
+apiVersion: stream.space/v1alpha1
+kind: Template
+metadata:
+  name: blender-selkies
+  namespace: workspaces
+  labels:
+    app.kubernetes.io/name: blender-selkies
+    app.kubernetes.io/component: template
+    streamspace.io/category: design-graphics
+    streamspace.io/streaming-protocol: selkies
+  annotations:
+    streamspace.dev/image-status: published
+spec:
+  displayName: Blender
+  description: Blender 3D suite streamed via Selkies-GStreamer (WebRTC). Streaming encoder auto-selects NVENC/VA-API on GPU hosts; Cycles GPU rendering needs --gpus all (Docker) or device plugins (K8s).
+  category: Design & Graphics
+  icon: https://raw.githubusercontent.com/streamspace-dev/streamspace/main/ui/public/icons/blender.svg
+  baseImage: ghcr.io/streamspace-dev/blender-selkies:latest
+  streamingProtocol: selkies
+  defaultResources:
+    requests:
+      memory: 4Gi
+      cpu: 2000m
+    limits:
+      memory: 8Gi
+      cpu: 4000m
+  ports:
+  - name: selkies
+    containerPort: 8080
+    protocol: TCP
+  env:
+  - name: TZ
+    value: UTC
+  - name: DISPLAY_SIZEW
+    value: '1920'
+  - name: DISPLAY_SIZEH
+    value: '1080'
+  - name: SELKIES_ENABLE_AUDIO
+    value: 'false'
+  capabilities:
+  - Network
+  - Clipboard
+  tags:
+  - design
+  - graphics
+  - 3d
+  - blender
+  - selkies
