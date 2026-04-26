@@ -21,81 +21,118 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v4
 
-      - name: Set up kubectl
-        uses: azure/setup-kubectl@v4
+      - name: Set up Python
+        uses: actions/setup-python@v5
         with:
-          version: 'v1.28.0'
+          python-version: '3.12'
 
-      - name: Validate YAML syntax
+      - name: Install validators
         run: |
-          echo "Validating YAML syntax..."
-          for file in $(find . -name "*.yaml" -o -name "*.yml" | grep -v ".github"); do
-            echo "Checking $file"
-            kubectl apply --dry-run=client -f "$file" || exit 1
-          done
+          pip install --quiet pyyaml yamllint
 
-      - name: Check required fields
+      - name: Lint YAML syntax (yamllint)
+        env:
+          YAMLLINT_CONFIG: |
+            extends: default
+            rules:
+              line-length: disable
+              document-start: disable
+              comments-indentation: disable
+              truthy: disable
+              indentation:
+                indent-sequences: consistent
         run: |
-          echo "Checking required Template fields..."
-          for file in $(find browsers development productivity design media gaming webtop -name "*.yaml" 2>/dev/null); do
-            echo "Validating $file"
-
-            # Check apiVersion
-            if ! grep -q "apiVersion: stream.space/v1alpha1" "$file"; then
-              echo "ERROR: Missing or incorrect apiVersion in $file"
-              exit 1
-            fi
-
-            # Check kind
-            if ! grep -q "kind: Template" "$file"; then
-              echo "ERROR: Missing or incorrect kind in $file"
-              exit 1
-            fi
-
-            # Check required spec fields
-            if ! grep -q "displayName:" "$file"; then
-              echo "WARNING: Missing displayName in $file"
-            fi
-
-            if ! grep -q "category:" "$file"; then
-              echo "WARNING: Missing category in $file"
-            fi
-
-            if ! grep -q "baseImage:" "$file"; then
-              echo "ERROR: Missing baseImage in $file"
-              exit 1
-            fi
-
-            echo "✓ $file passed validation"
-          done
-
-      - name: Check catalog consistency
-        run: |
-          if [ -f catalog.yaml ]; then
-            echo "Checking catalog.yaml consistency..."
-
-            # Count templates in directories
-            ACTUAL_COUNT=$(find browsers development productivity design media gaming webtop -name "*.yaml" 2>/dev/null | wc -l)
-            CATALOG_COUNT=$(grep -c "path:" catalog.yaml || echo 0)
-
-            echo "Templates in directories: $ACTUAL_COUNT"
-            echo "Templates in catalog: $CATALOG_COUNT"
-
-            if [ "$ACTUAL_COUNT" != "$CATALOG_COUNT" ]; then
-              echo "WARNING: Template count mismatch. Update catalog.yaml"
-            fi
+          set -e
+          echo "${YAMLLINT_CONFIG}" > /tmp/yamllint.yml
+          # Lint everything except .github (which has its own action linter).
+          # `find -print0` + xargs -0 handles the directories with commas
+          # in their names (e.g. `irc,chat/`).
+          mapfile -d '' -t files < <(find . \
+              -name '*.yaml' -o -name '*.yml' -print0 \
+              | grep -zv '^\./\.github/' || true)
+          if [ "${#files[@]}" -eq 0 ]; then
+            echo "No YAML files to lint"; exit 0
           fi
+          yamllint -c /tmp/yamllint.yml "${files[@]}"
+
+      - name: Validate Template manifests (selkies/ and category dirs)
+        env:
+          ALLOWED_API_VERSION: 'stream.space/v1alpha1'
+          ALLOWED_KIND: 'Template'
+        run: |
+          python3 - <<'PY'
+          import os, sys, yaml, pathlib
+
+          ALLOWED_API_VERSION = os.environ['ALLOWED_API_VERSION']
+          ALLOWED_KIND = os.environ['ALLOWED_KIND']
+
+          # Skip these directories — they contain non-Template YAML
+          # (CI configs, image build artifacts, README front-matter, …)
+          SKIP_DIRS = {'.github', 'images', 'scripts', 'docs', '.git'}
+
+          errors = []
+          warnings = []
+          checked = 0
+
+          for path in sorted(pathlib.Path('.').rglob('*.y*ml')):
+              parts = path.parts
+              if any(skip in parts for skip in SKIP_DIRS):
+                  continue
+              # catalog.yaml has its own shape (a list of templates),
+              # not a Template CRD itself.
+              if path.name == 'catalog.yaml':
+                  continue
+
+              try:
+                  with path.open('r') as fh:
+                      docs = list(yaml.safe_load_all(fh))
+              except yaml.YAMLError as e:
+                  errors.append(f"{path}: invalid YAML — {e}")
+                  continue
+
+              for doc in docs:
+                  if not isinstance(doc, dict):
+                      continue
+                  api_version = doc.get('apiVersion')
+                  kind = doc.get('kind')
+                  if kind != ALLOWED_KIND:
+                      # Not a Template doc — skip silently.
+                      continue
+                  checked += 1
+                  if api_version != ALLOWED_API_VERSION:
+                      errors.append(
+                          f"{path}: apiVersion={api_version!r}, "
+                          f"want {ALLOWED_API_VERSION!r}"
+                      )
+                  spec = doc.get('spec', {}) or {}
+                  for required in ('displayName', 'category', 'baseImage'):
+                      if not spec.get(required):
+                          errors.append(f"{path}: spec.{required} is required")
+                  if not spec.get('streamingProtocol'):
+                      warnings.append(
+                          f"{path}: spec.streamingProtocol not set "
+                          f"— platform defaults to 'selkies' but explicit is better"
+                      )
+
+          for w in warnings:
+              print(f"::warning::{w}")
+          for e in errors:
+              print(f"::error::{e}")
+
+          print(f"\nChecked {checked} Template manifests, "
+                f"{len(errors)} error(s), {len(warnings)} warning(s)")
+          sys.exit(1 if errors else 0)
+          PY
 
       - name: Summary
         if: success()
         run: |
-          echo "✅ All templates validated successfully!"
+          echo "✅ Template validation passed"
           echo ""
-          echo "Template Statistics:"
-          echo "- Browsers: $(find browsers -name "*.yaml" 2>/dev/null | wc -l)"
-          echo "- Development: $(find development -name "*.yaml" 2>/dev/null | wc -l)"
-          echo "- Productivity: $(find productivity -name "*.yaml" 2>/dev/null | wc -l)"
-          echo "- Design: $(find design -name "*.yaml" 2>/dev/null | wc -l)"
-          echo "- Media: $(find media -name "*.yaml" 2>/dev/null | wc -l)"
-          echo "- Gaming: $(find gaming -name "*.yaml" 2>/dev/null | wc -l)"
-          echo "- Webtop: $(find webtop -name "*.yaml" 2>/dev/null | wc -l)"
+          echo "Counts by directory:"
+          for dir in selkies browsers development webtop design-graphics audio-video productivity communication file-management remote-access; do
+            if [ -d "$dir" ]; then
+              n=$(find "$dir" -maxdepth 1 -name "*.yaml" 2>/dev/null | wc -l | tr -d ' ')
+              printf "  %-25s %s\n" "$dir/" "$n"
+            fi
+          done
