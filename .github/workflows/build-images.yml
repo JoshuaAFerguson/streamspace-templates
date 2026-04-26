@@ -103,6 +103,7 @@ jobs:
       - name: Resolve target platforms for this image
         id: platforms
         env:
+          IMAGE_NAME: ${{ matrix.image }}
           IMAGE_DIR: ./images/${{ matrix.image }}
         run: |
           set -euo pipefail
@@ -119,7 +120,7 @@ jobs:
             echo "::error::PLATFORMS file in ${IMAGE_DIR} is empty"
             exit 1
           fi
-          echo "Building ${matrix.image} for: ${platforms}"
+          echo "Building ${IMAGE_NAME} for: ${platforms}"
           echo "value=${platforms}" >> "${GITHUB_OUTPUT}"
 
       - name: Set up QEMU
