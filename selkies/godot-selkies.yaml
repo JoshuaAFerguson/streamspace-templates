@@ -1,0 +1,50 @@
+apiVersion: stream.space/v1alpha1
+kind: Template
+metadata:
+  name: godot-selkies
+  namespace: workspaces
+  labels:
+    app.kubernetes.io/name: godot-selkies
+    app.kubernetes.io/component: template
+    streamspace.io/category: development
+    streamspace.io/streaming-protocol: selkies
+  annotations:
+    streamspace.dev/image-status: published
+spec:
+  displayName: Godot Engine
+  description: Godot game engine streamed via Selkies-GStreamer (WebRTC).
+  category: Development
+  icon: https://raw.githubusercontent.com/streamspace-dev/streamspace/main/ui/public/icons/godot.svg
+  baseImage: ghcr.io/streamspace-dev/godot-selkies:latest
+  streamingProtocol: selkies
+  defaultResources:
+    requests:
+      memory: 4Gi
+      cpu: 2000m
+    limits:
+      memory: 8Gi
+      cpu: 4000m
+  ports:
+  - name: selkies
+    containerPort: 8080
+    protocol: TCP
+  env:
+  - name: TZ
+    value: UTC
+  - name: DISPLAY_SIZEW
+    value: '1920'
+  - name: DISPLAY_SIZEH
+    value: '1080'
+  - name: SELKIES_ENABLE_AUDIO
+    value: 'true'
+  capabilities:
+  - Network
+  - Audio
+  - Clipboard
+  tags:
+  - development
+  - game-engine
+  - 3d
+  - 2d
+  - godot
+  - selkies
