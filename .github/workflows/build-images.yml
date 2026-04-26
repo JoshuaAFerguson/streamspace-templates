@@ -100,6 +100,28 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
+      - name: Resolve target platforms for this image
+        id: platforms
+        env:
+          IMAGE_DIR: ./images/${{ matrix.image }}
+        run: |
+          set -euo pipefail
+          # An image can declare its supported platforms via images/<name>/PLATFORMS
+          # (one platform per line, e.g. `linux/amd64`). When the file is
+          # absent, default to the standard amd64+arm64 multi-arch matrix.
+          if [ -f "${IMAGE_DIR}/PLATFORMS" ]; then
+            platforms=$(grep -v '^[[:space:]]*\(#.*\)\?$' "${IMAGE_DIR}/PLATFORMS" \
+                          | paste -sd, -)
+          else
+            platforms='linux/amd64,linux/arm64'
+          fi
+          if [ -z "${platforms}" ]; then
+            echo "::error::PLATFORMS file in ${IMAGE_DIR} is empty"
+            exit 1
+          fi
+          echo "Building ${matrix.image} for: ${platforms}"
+          echo "value=${platforms}" >> "${GITHUB_OUTPUT}"
+
       - name: Set up QEMU
         uses: docker/setup-qemu-action@v3
 
@@ -140,7 +162,7 @@ jobs:
         with:
           context: ./images/${{ matrix.image }}
           file: ./images/${{ matrix.image }}/Dockerfile
-          platforms: linux/amd64,linux/arm64
+          platforms: ${{ steps.platforms.outputs.value }}
           push: ${{ github.event_name != 'pull_request' }}
           tags: ${{ steps.meta.outputs.tags }}
           labels: ${{ steps.meta.outputs.labels }}

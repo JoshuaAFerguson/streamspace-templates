@@ -5,22 +5,24 @@ subdirectory is a single image; the build workflow at
 `.github/workflows/build-images.yml` discovers them automatically and
 publishes to `ghcr.io/streamspace-dev/<image-name>`.
 
-> [!WARNING]
-> **No image is currently publishable.** The only image source —
-> `chrome-selkies` — references a base image that doesn't exist
-> (`ghcr.io/selkies-project/selkies-gstreamer:24.04` returns 403).
-> The CI build workflow has been failing on every run since the
-> pipeline was set up. Tracked in [#3](https://github.com/streamspace-dev/streamspace-templates/issues/3).
-> The Selkies project ships its runtime as release tarballs, not
-> as a thin base image; the `chrome-selkies` Dockerfile needs to
-> be rewritten `FROM ubuntu:24.04` and install Selkies from
-> [`selkies` releases](https://github.com/selkies-project/selkies/releases).
-
 ## Available images
 
-| Image | Status | Streaming |
+| Image | Platforms | Streaming |
 |---|---|---|
-| `chrome-selkies` | ❌ broken — see issue #3 | (would be) Selkies (WebRTC) on :8080 |
+| `chrome-selkies` | linux/amd64 | Selkies-GStreamer (WebRTC) on :8080 |
+
+## Per-image platforms
+
+Each image directory may contain a `PLATFORMS` file (one platform per
+line, e.g. `linux/amd64`) declaring which architectures the build
+workflow should produce. Without it, the workflow defaults to
+`linux/amd64,linux/arm64`.
+
+`chrome-selkies` is amd64-only because the upstream Selkies project's
+v1.6.2 release ships its `gstreamer-selkies_gpl` tarball for
+`ubuntu24.04_amd64` only — there is no arm64 variant. Once upstream
+ships arm64 binaries, drop the file (or add `linux/arm64`) to enable
+multi-arch.
 
 ## Standards every image must follow
 
