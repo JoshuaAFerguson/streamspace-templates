@@ -1,0 +1,48 @@
+apiVersion: stream.space/v1alpha1
+kind: Template
+metadata:
+  name: retroarch-selkies
+  namespace: workspaces
+  labels:
+    app.kubernetes.io/name: retroarch-selkies
+    app.kubernetes.io/component: template
+    streamspace.io/category: gaming
+    streamspace.io/streaming-protocol: selkies
+  annotations:
+    streamspace.dev/image-status: published
+spec:
+  displayName: RetroArch
+  description: RetroArch frontend with bundled libretro cores (snes9x, genesis-plus-gx, mGBA, nestopia, mupen64plus-next), streamed via Selkies-GStreamer (WebRTC).
+  category: Gaming
+  icon: https://raw.githubusercontent.com/streamspace-dev/streamspace/main/ui/public/icons/retroarch.svg
+  baseImage: ghcr.io/streamspace-dev/retroarch-selkies:latest
+  streamingProtocol: selkies
+  defaultResources:
+    requests:
+      memory: 4Gi
+      cpu: 2000m
+    limits:
+      memory: 4Gi
+      cpu: 4000m
+  ports:
+  - name: selkies
+    containerPort: 8080
+    protocol: TCP
+  env:
+  - name: TZ
+    value: UTC
+  - name: DISPLAY_SIZEW
+    value: '1920'
+  - name: DISPLAY_SIZEH
+    value: '1080'
+  - name: SELKIES_ENABLE_AUDIO
+    value: 'true'
+  capabilities:
+  - Network
+  - Audio
+  - Clipboard
+  tags:
+  - gaming
+  - emulator
+  - retroarch
+  - selkies

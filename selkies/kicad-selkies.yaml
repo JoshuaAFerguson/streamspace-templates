@@ -1,0 +1,49 @@
+apiVersion: stream.space/v1alpha1
+kind: Template
+metadata:
+  name: kicad-selkies
+  namespace: workspaces
+  labels:
+    app.kubernetes.io/name: kicad-selkies
+    app.kubernetes.io/component: template
+    streamspace.io/category: design-graphics
+    streamspace.io/streaming-protocol: selkies
+  annotations:
+    streamspace.dev/image-status: published
+spec:
+  displayName: KiCad
+  description: KiCad cross-platform open-source EDA suite for electronics design automation, streamed via Selkies-GStreamer (WebRTC).
+  category: Design & Graphics
+  icon: https://raw.githubusercontent.com/streamspace-dev/streamspace/main/ui/public/icons/kicad.svg
+  baseImage: ghcr.io/streamspace-dev/kicad-selkies:latest
+  streamingProtocol: selkies
+  defaultResources:
+    requests:
+      memory: 4Gi
+      cpu: 2000m
+    limits:
+      memory: 8Gi
+      cpu: 4000m
+  ports:
+  - name: selkies
+    containerPort: 8080
+    protocol: TCP
+  env:
+  - name: TZ
+    value: UTC
+  - name: DISPLAY_SIZEW
+    value: '1920'
+  - name: DISPLAY_SIZEH
+    value: '1080'
+  - name: SELKIES_ENABLE_AUDIO
+    value: 'false'
+  capabilities:
+  - Network
+  - Clipboard
+  tags:
+  - design
+  - eda
+  - electronics
+  - pcb
+  - kicad
+  - selkies
