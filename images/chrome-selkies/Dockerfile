@@ -1,20 +1,30 @@
 # StreamSpace Chrome Browser with Selkies WebRTC
 #
-# This is a standardized browser image for StreamSpace that uses Selkies-GStreamer
-# for high-performance WebRTC streaming instead of traditional VNC.
+# !!! THIS DOCKERFILE DOES NOT BUILD !!!
+# !!! TRACKED BY ISSUE #3              !!!
 #
-# Features:
-# - Chrome browser pre-configured
-# - Selkies-GStreamer WebRTC streaming on port 8080
-# - Hardware acceleration support (NVENC, VA-API)
-# - Clipboard sharing
-# - Audio support
-# - Optimized for low latency
+# The base image `ghcr.io/selkies-project/selkies-gstreamer:24.04` does
+# NOT exist in the upstream registry. Pulling it returns 403 Forbidden.
 #
-# Build:
+# The Selkies project (https://github.com/selkies-project/selkies)
+# distributes the runtime as release tarballs (currently v1.6.2),
+# not as a base container image. To make this image build, the
+# Dockerfile must be rewritten to:
+#
+#   1. FROM ubuntu:24.04
+#   2. Download + unpack `gstreamer-selkies_gpl_<v>_ubuntu24.04_amd64.tar.gz`
+#      from https://github.com/selkies-project/selkies/releases
+#   3. pip install the `selkies_gstreamer-<v>-py3-none-any.whl` wheel
+#   4. Unpack the `selkies-gstreamer-web_<v>.tar.gz` web assets
+#   5. Install Chrome (the apt-get block below is fine)
+#   6. Update entrypoint.sh to launch the installed selkies-gstreamer
+#
+# See the upstream `docker-nvidia-egl-desktop` Dockerfile as the
+# canonical reference for steps 1-4:
+#   https://github.com/selkies-project/docker-nvidia-egl-desktop/blob/main/Dockerfile
+#
+# Once fixed, the build/run flow will be:
 #   docker build -t ghcr.io/streamspace-dev/chrome-selkies:latest .
-#
-# Run locally:
 #   docker run -p 8080:8080 ghcr.io/streamspace-dev/chrome-selkies:latest
 
 FROM ghcr.io/selkies-project/selkies-gstreamer:24.04
