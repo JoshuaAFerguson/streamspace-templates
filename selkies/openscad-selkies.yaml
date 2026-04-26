@@ -1,0 +1,48 @@
+apiVersion: stream.space/v1alpha1
+kind: Template
+metadata:
+  name: openscad-selkies
+  namespace: workspaces
+  labels:
+    app.kubernetes.io/name: openscad-selkies
+    app.kubernetes.io/component: template
+    streamspace.io/category: design-graphics
+    streamspace.io/streaming-protocol: selkies
+  annotations:
+    streamspace.dev/image-status: published
+spec:
+  displayName: OpenSCAD
+  description: OpenSCAD code-based 3D CAD modeler streamed via Selkies-GStreamer (WebRTC).
+  category: Design & Graphics
+  icon: https://raw.githubusercontent.com/streamspace-dev/streamspace/main/ui/public/icons/openscad.svg
+  baseImage: ghcr.io/streamspace-dev/openscad-selkies:latest
+  streamingProtocol: selkies
+  defaultResources:
+    requests:
+      memory: 2Gi
+      cpu: 1000m
+    limits:
+      memory: 4Gi
+      cpu: 2000m
+  ports:
+  - name: selkies
+    containerPort: 8080
+    protocol: TCP
+  env:
+  - name: TZ
+    value: UTC
+  - name: DISPLAY_SIZEW
+    value: '1920'
+  - name: DISPLAY_SIZEH
+    value: '1080'
+  - name: SELKIES_ENABLE_AUDIO
+    value: 'false'
+  capabilities:
+  - Network
+  - Clipboard
+  tags:
+  - design
+  - cad
+  - 3d
+  - openscad
+  - selkies
