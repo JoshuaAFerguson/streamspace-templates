@@ -187,10 +187,15 @@ jobs:
 
       - name: Generate SBOM
         if: github.event_name != 'pull_request'
+        id: sbom
         uses: anchore/sbom-action@v0
         with:
           image: ${{ env.IMAGE_PREFIX }}/${{ matrix.image }}@${{ steps.build.outputs.digest }}
+          # `artifact-name` is the GitHub-artifact upload name only;
+          # the actual file path on disk needs `output-file` so the
+          # next step (cosign attest) can read it.
           artifact-name: ${{ matrix.image }}-sbom.spdx.json
+          output-file: ${{ runner.temp }}/${{ matrix.image }}-sbom.spdx.json
           format: spdx-json
 
       - name: Attach SBOM as cosign attestation
@@ -198,10 +203,15 @@ jobs:
         env:
           DIGEST: ${{ steps.build.outputs.digest }}
           IMAGE: ${{ env.IMAGE_PREFIX }}/${{ matrix.image }}
-          SBOM_NAME: ${{ matrix.image }}-sbom.spdx.json
+          SBOM_PATH: ${{ runner.temp }}/${{ matrix.image }}-sbom.spdx.json
         run: |
           set -euo pipefail
+          if [ ! -f "${SBOM_PATH}" ]; then
+            echo "::error::SBOM file not found at ${SBOM_PATH}"
+            ls -la "$(dirname "${SBOM_PATH}")" || true
+            exit 1
+          fi
           cosign attest --yes \
             --type spdxjson \
-            --predicate "${SBOM_NAME}" \
+            --predicate "${SBOM_PATH}" \
             "${IMAGE}@${DIGEST}"
