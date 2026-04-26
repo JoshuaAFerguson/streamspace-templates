@@ -5,35 +5,34 @@ metadata:
   namespace: workspaces
 spec:
   displayName: Inkscape
-  description: Professional vector graphics editor for creating illustrations, diagrams, logos, icons, and complex artwork. SVG-based with extensive tools.
+  description: '[Inkscape] is professional quality vector graphics software which
+    runs on Linux, Mac OS X and Windows desktop computers.'
   category: Design & Graphics
   icon: https://raw.githubusercontent.com/linuxserver/docker-templates/master/linuxserver.io/img/inkscape-logo.png
   baseImage: lscr.io/linuxserver/inkscape:latest
   defaultResources:
-    memory: 3Gi
-    cpu: 1500m
+    memory: 4Gi
+    cpu: 2000m
   ports:
-    - name: vnc
-      containerPort: 3000
-      protocol: TCP
+  - name: vnc
+    containerPort: 3000
+    protocol: TCP
   env:
-    - name: PUID
-      value: "1000"
-    - name: PGID
-      value: "1000"
-    - name: TZ
-      value: "America/New_York"
+  - name: PUID
+    value: '1000'
+  - name: PGID
+    value: '1000'
+  - name: TZ
+    value: America/New_York
   volumeMounts:
-    - name: user-home
-      mountPath: /config
+  - name: user-home
+    mountPath: /config
   kasmvnc:
     enabled: true
     port: 3000
   capabilities:
-    - Clipboard
+  - Network
+  - Clipboard
   tags:
-    - vector
-    - graphics
-    - design
-    - svg
-    - illustration
+  - inkscape
+  - design & graphics
