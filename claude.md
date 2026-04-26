@@ -1,246 +1,132 @@
-# StreamSpace Templates Repository
+# StreamSpace Templates Repository — Context for AI Assistants
 
-## Overview
+## What this repo owns
 
-This repository hosts application templates for [StreamSpace](https://github.com/JoshuaAFerguson/streamspace), a Kubernetes-native platform for streaming containerized desktop applications and development environments to the web browser.
+This is the [`streamspace-templates`](https://github.com/streamspace-dev/streamspace-templates) sibling of [`streamspace-dev/streamspace`](https://github.com/streamspace-dev/streamspace). It owns **two** things:
 
-## Purpose
+1. **Application template manifests** (`stream.space/v1alpha1 Template` CRDs) that the StreamSpace control plane consumes to know what apps users can launch.
+2. **Container image source + multi-arch build pipeline** for the custom images those templates reference. The pipeline publishes signed images with SBOM attestations to `ghcr.io/streamspace-dev/<image>`.
 
-StreamSpace Templates are Kubernetes Custom Resources (CRDs) that define containerized applications ready for streaming. Each template includes:
+## Streaming protocol — Selkies-only
 
-- Application metadata (name, description, category, icon)
-- Container image reference (primarily LinuxServer.io images)
-- Resource requirements (CPU, memory)
-- Port configurations (KasmVNC or HTTP)
-- Environment variables
-- Volume mounts for persistent storage
-- Capabilities (network, audio, clipboard)
+Since April 2026 the StreamSpace platform is **Selkies-GStreamer (WebRTC) only**. The old VNC code path was retired. Any new template you add must:
 
-## Repository Structure
+- Set `spec.streamingProtocol: selkies`
+- Expose the streaming endpoint on **port 8080**
+- Either use one of our published images under `ghcr.io/streamspace-dev/` or a third-party Selkies-compatible image
+
+Templates that reference KasmVNC images on port 3000 (the inherited LinuxServer.io catalog under `browsers/`, `webtop/`, `development/`, etc.) **are not currently usable** with the live control plane. They remain in the repo as a reference set for the catalog migration; replacing them with Selkies-native equivalents is tracked work.
+
+## Repository structure
 
 ```
 streamspace-templates/
-├── scripts/                    # Template generation scripts
-│   ├── generate-templates.py      # Generate from LinuxServer.io API
-│   ├── generate-from-catalog.py   # Generate from curated catalog
-│   ├── popular-apps.json          # Curated app list
-│   └── README.md                  # Scripts documentation
-├── web-browsers/               # Browser templates
-├── development/                # Development tools
-├── productivity/               # Office & productivity apps
-├── design-graphics/            # Design & graphics tools
-├── audio-video/                # Media editing tools
-├── gaming/                     # Game emulators
-├── desktop-environments/       # Full Linux desktops
-├── communication/              # Chat & messaging
-├── file-management/            # File transfer tools
-├── remote-access/              # Remote desktop clients
-├── catalog.yaml                # Template discovery metadata
-├── README.md                   # User-facing documentation
-├── CONTRIBUTING.md             # Contribution guidelines
-└── claude.md                   # This file (AI context)
+├── images/                        # Dockerfile sources for custom images
+│   ├── README.md                  # Standards every image must follow
+│   └── chrome-selkies/            # First custom Selkies-native image
+│       ├── Dockerfile
+│       └── entrypoint.sh
+├── selkies/                       # Selkies-native template manifests
+│   └── chrome-selkies.yaml
+├── browsers/, development/, webtop/, …    # Inherited LinuxServer-based templates (legacy)
+├── catalog.yaml                   # Catalog metadata
+├── CONTRIBUTING.md                # Submission workflow
+├── README.md                      # User-facing readme
+└── .github/workflows/
+    ├── validate.yaml              # YAML / required-field validation
+    └── build-images.yml           # Multi-arch build, cosign sign, SBOM attest
 ```
 
-## Template Format
+## Image standards (`images/README.md`)
 
-Templates use the StreamSpace Template CRD specification:
+Every image must:
+
+- Stream over **Selkies-GStreamer on port 8080**
+- Honor the standard env knobs: `DISPLAY_SIZEW`, `DISPLAY_SIZEH`, `SELKIES_ENCODER`, `SELKIES_ENABLE_AUDIO`, `TZ`
+- Carry the OCI labels — `title`, `description`, `vendor=StreamSpace`, `source=https://github.com/streamspace-dev/streamspace-templates`
+- Include a `HEALTHCHECK` against `:8080/`
+- Run as a non-root user inside the container
+
+The build workflow auto-discovers any subdirectory of `images/` that contains a `Dockerfile`, builds it for `linux/amd64,linux/arm64`, signs with cosign keyless via the GitHub Actions OIDC identity, and attaches a SPDX-JSON SBOM. PR builds skip the push step.
+
+## Template manifest spec
+
+Selkies-native template (current canonical pattern):
 
 ```yaml
 apiVersion: stream.space/v1alpha1
 kind: Template
 metadata:
-  name: application-name
+  name: <name>
   namespace: workspaces
 spec:
-  displayName: Application Display Name
-  description: Application description
-  category: Category Name
-  icon: https://url-to-icon.png
-  baseImage: lscr.io/linuxserver/app:latest
+  displayName: <Human Name>
+  description: <One-liner>
+  category: <category>
+  baseImage: ghcr.io/streamspace-dev/<name>:latest
+  streamingProtocol: selkies
   defaultResources:
-    memory: 2Gi
-    cpu: 1000m
+    requests:
+      memory: 2Gi
+      cpu: 1000m
   ports:
-    - name: vnc
-      containerPort: 3000
+    - name: selkies
+      containerPort: 8080
       protocol: TCP
   env:
-    - name: PUID
-      value: "1000"
-    - name: PGID
-      value: "1000"
     - name: TZ
-      value: "America/New_York"
-  volumeMounts:
-    - name: user-home
-      mountPath: /config
-  kasmvnc:
-    enabled: true
-    port: 3000
+      value: UTC
   capabilities:
     - Network
-    - Clipboard
     - Audio
+    - Clipboard
   tags:
-    - tag1
-    - tag2
+    - <category-tag>
+    - selkies
 ```
 
-### Key Fields
+Legacy LinuxServer-style entries (in `browsers/`, `webtop/`, etc.) use a different shape with a `kasmvnc:` block on port 3000. Don't add new templates in that style.
 
-- **apiVersion**: Always `stream.space/v1alpha1`
-- **namespace**: Always `workspaces`
-- **baseImage**: Container image (prefer LinuxServer.io)
-- **defaultResources**: CPU/memory defaults
-- **ports**: Container ports (3000 for KasmVNC, 8080 for HTTP)
-- **kasmvnc.enabled**: true for GUI apps, false for web apps
-- **capabilities**: Network, Audio, Clipboard support
-- **volumeMounts**: Persist data to `/config`
+## Adding a new image + template
 
-## Template Generation
+1. Create `images/<name>/Dockerfile` (and `entrypoint.sh` if you need encoder auto-detection or other startup logic — copy the pattern from `images/chrome-selkies/`).
+2. Add `selkies/<name>.yaml` with the manifest above.
+3. Open a PR. CI will:
+   - Build the image (PR event → no push, just verify)
+   - Validate the YAML and required CRD fields
+4. On merge to `main`: image publishes as `ghcr.io/streamspace-dev/<name>:latest` and `:sha-<short>`, signed and SBOM-attested.
+5. Tag the repo `vX.Y.Z` to publish semver tags.
 
-### From LinuxServer.io API
-
-Generate all available LinuxServer.io images:
+## Verifying a published image
 
 ```bash
-python3 scripts/generate-templates.py
+cosign verify ghcr.io/streamspace-dev/chrome-selkies:latest \
+  --certificate-identity-regexp '^https://github.com/streamspace-dev/streamspace-templates/' \
+  --certificate-oidc-issuer https://token.actions.githubusercontent.com
+
+cosign download attestation ghcr.io/streamspace-dev/chrome-selkies:latest \
+  --predicate-type https://spdx.dev/Document
 ```
 
-This fetches the complete catalog from https://api.linuxserver.io/api/v1/images and generates templates for all compatible images.
+## What NOT to do
 
-### From Curated Catalog
+- Don't add new templates pointing at `lscr.io/linuxserver/...` images. Those use KasmVNC on port 3000 and don't work with the Selkies-only control plane.
+- Don't reintroduce the `kasmvnc:` template block.
+- Don't bake credentials, license keys, or org-specific config into image layers.
+- Don't pin upstream base images to `:latest` — use `selkies-gstreamer:24.04` style explicit tags.
+- Don't write commit messages or PRs that reference the old wave-based dev workflow (`Wave 28`, `agent3-validator`, etc.); that workflow was retired in April 2026.
 
-Generate from the curated popular apps list:
+## Related repos
 
-```bash
-python3 scripts/generate-from-catalog.py
-```
+- [`streamspace-dev/streamspace`](https://github.com/streamspace-dev/streamspace) — Control Plane API, K8s/Docker agents, Web UI, Helm chart
+- [`streamspace-dev/streamspace-plugins`](https://github.com/streamspace-dev/streamspace-plugins) — Optional plugins
+- [`streamspace-dev/streamspace.wiki`](https://github.com/streamspace-dev/streamspace.wiki) — End-user documentation
 
-This uses `scripts/popular-apps.json` to generate templates for hand-picked, popular applications.
+## Working with Claude Code
 
-### Workflow
+When you make changes here, the things that usually matter:
 
-1. **Generate templates** using the Python scripts
-2. **Review generated YAML files** in category directories
-3. **Update catalog.yaml** with new template metadata
-4. **Test templates** by deploying to a Kubernetes cluster
-5. **Commit and push** to make available to StreamSpace users
-
-## Categories
-
-Templates are organized by category:
-
-- **Web Browsers**: Firefox, Chromium, Brave, LibreWolf, Opera
-- **Development**: VS Code, IDEs, text editors
-- **Productivity**: LibreOffice, office suites
-- **Design & Graphics**: GIMP, Krita, Inkscape, Blender, FreeCAD
-- **Audio & Video**: Audacity, Kdenlive, OBS
-- **Gaming**: DuckStation, Dolphin emulator
-- **Desktop Environments**: Webtop (Ubuntu, Alpine, Fedora)
-- **Communication**: Telegram, Element, messaging apps
-- **File Management**: FileZilla, torrent clients
-- **Remote Access**: Remmina, remote desktop clients
-- **Security**: Password managers, security tools
-- **AI & ML**: Machine learning tools
-- **Automation**: Home automation, web tools
-- **System Utilities**: Monitoring, admin tools
-
-## Image Sources
-
-Templates primarily use LinuxServer.io images:
-
-- **Base Registry**: `lscr.io/linuxserver/`
-- **Icon URLs**: `https://raw.githubusercontent.com/linuxserver/docker-templates/master/linuxserver.io/img/`
-- **KasmVNC**: Built-in for GUI applications (port 3000)
-
-LinuxServer.io provides:
-- Consistent image structure
-- Regular updates and security patches
-- KasmVNC integration for browser-based access
-- Standardized environment variables (PUID, PGID, TZ)
-- Volume persistence at `/config`
-
-## Common Tasks
-
-### Generate All Templates
-
-```bash
-cd /home/user/streamspace-templates
-python3 scripts/generate-templates.py
-```
-
-### List Available Categories
-
-```bash
-python3 scripts/generate-templates.py --list-categories
-```
-
-### Generate Specific Category
-
-```bash
-python3 scripts/generate-templates.py --category "Web Browsers"
-```
-
-### Add Custom Template
-
-1. Create YAML file in appropriate category directory
-2. Follow the template format specification
-3. Add entry to `catalog.yaml`
-4. Test: `kubectl apply -f your-template.yaml`
-
-### Update Catalog
-
-After generating new templates, update `catalog.yaml`:
-
-1. Add category to `spec.categories` if new
-2. Add template entries to `spec.templates`
-3. Update `spec.stats.totalTemplates` count
-4. Update `spec.stats.lastUpdated` date
-
-## Testing
-
-Deploy template to Kubernetes cluster:
-
-```bash
-kubectl apply -f browsers/firefox.yaml
-```
-
-Verify template created:
-
-```bash
-kubectl get templates -n workspaces
-```
-
-Create a session from the template (via StreamSpace UI or API).
-
-## Contributing
-
-See [CONTRIBUTING.md](CONTRIBUTING.md) for guidelines on:
-
-- Adding new templates
-- Template naming conventions
-- Resource allocation guidelines
-- Testing requirements
-- Pull request process
-
-## Links
-
-- **Main Project**: https://github.com/JoshuaAFerguson/streamspace
-- **Template Repository**: https://github.com/JoshuaAFerguson/streamspace-templates
-- **LinuxServer.io**: https://www.linuxserver.io/
-- **LinuxServer.io API**: https://api.linuxserver.io/api/v1/images
-- **Docker Templates**: https://github.com/linuxserver/docker-templates
-
-## Notes for AI Assistants
-
-When working with this repository:
-
-1. **Template Format**: Always use `apiVersion: stream.space/v1alpha1` and `namespace: workspaces`
-2. **Generation**: Use the Python scripts to generate templates from LinuxServer.io
-3. **Organization**: Templates go in category-based directories
-4. **Resources**: Follow category-based defaults (browsers: 2Gi/1CPU, development: 4Gi/2CPU, etc.)
-5. **KasmVNC**: Enable for GUI apps (port 3000), disable for web apps (port 8080)
-6. **Testing**: Always verify templates can be applied to Kubernetes cluster
-7. **Catalog**: Keep catalog.yaml in sync with generated templates
-8. **Commits**: Commit templates with clear messages about what was added/updated
+- **One image change → one matrix entry** in CI. The discover step in `build-images.yml` only rebuilds images whose subdirectory changed in the diff. If you add a new image, you don't have to wait for the entire fleet to rebuild.
+- **catalog.yaml** should stay in sync with what's in the repo, but the platform's primary template-discovery path now reads templates directly from category dirs via the `repositories.templates` Helm config — the catalog file is documentation, not source of truth.
+- **The validate workflow** runs `kubectl apply --dry-run=client` against every YAML; broken manifests fail the PR.
+- **Sample template** to copy: `selkies/chrome-selkies.yaml`.
