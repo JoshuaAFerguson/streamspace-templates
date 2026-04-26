@@ -1,54 +1,132 @@
 #!/bin/bash
-# StreamSpace Chrome Selkies Entrypoint
+# StreamSpace chrome-selkies entrypoint
 #
-# This script starts the Selkies-GStreamer WebRTC server with Chrome
+# Boot order:
+#   1. Configure encoder (auto-detect NVENC / VA-API; fall back to x264enc)
+#   2. Start Xvfb on $DISPLAY
+#   3. Start PulseAudio (user-mode, network-disabled)
+#   4. Launch the user's command (Chrome by default) on $DISPLAY in the background
+#   5. Run selkies-gstreamer in the foreground so PID 1 is the streaming process
+#      (signals propagate; container exits cleanly when selkies dies)
 
-set -e
+set -euo pipefail
 
-# Configure display resolution if provided
-if [ -n "$DISPLAY_WIDTH" ] && [ -n "$DISPLAY_HEIGHT" ]; then
-    export DISPLAY_SIZEW=$DISPLAY_WIDTH
-    export DISPLAY_SIZEH=$DISPLAY_HEIGHT
-fi
+log() { printf '[entrypoint] %s\n' "$*" >&2; }
 
-# Configure encoder based on available hardware
+# ---------------------------------------------------------------------------
+# 0. Arch-specific library paths for the Selkies GStreamer install.
+#    Mirrors the env block selkies-gstreamer prints on startup when it
+#    can't find its install. Lives in the entrypoint because Docker
+#    ENV directives don't run shell substitution like $(uname -m).
+# ---------------------------------------------------------------------------
+ARCH_TRIPLE="$(uname -m)-linux-gnu"
+export GSTREAMER_PATH="${GSTREAMER_PATH:-/opt/gstreamer}"
+export PATH="${GSTREAMER_PATH}/bin${PATH:+:${PATH}}"
+export LD_LIBRARY_PATH="${GSTREAMER_PATH}/lib/${ARCH_TRIPLE}${LD_LIBRARY_PATH:+:${LD_LIBRARY_PATH}}"
+export GST_PLUGIN_PATH="${GSTREAMER_PATH}/lib/${ARCH_TRIPLE}/gstreamer-1.0${GST_PLUGIN_PATH:+:${GST_PLUGIN_PATH}}"
+export GST_PLUGIN_SYSTEM_PATH="${HOME}/.local/share/gstreamer-1.0/plugins:/usr/lib/${ARCH_TRIPLE}/gstreamer-1.0${GST_PLUGIN_SYSTEM_PATH:+:${GST_PLUGIN_SYSTEM_PATH}}"
+export GI_TYPELIB_PATH="${GSTREAMER_PATH}/lib/${ARCH_TRIPLE}/girepository-1.0:/usr/lib/${ARCH_TRIPLE}/girepository-1.0${GI_TYPELIB_PATH:+:${GI_TYPELIB_PATH}}"
+export PYTHONPATH="${GSTREAMER_PATH}/lib/python3/dist-packages${PYTHONPATH:+:${PYTHONPATH}}"
+
+# ---------------------------------------------------------------------------
+# 1. Encoder selection — caller can pin SELKIES_ENCODER; otherwise sniff.
+# ---------------------------------------------------------------------------
 configure_encoder() {
-    # Check for NVIDIA GPU
+    if [ -n "${SELKIES_ENCODER:-}" ] && [ "${SELKIES_ENCODER}" != "auto" ]; then
+        log "Using pinned encoder: ${SELKIES_ENCODER}"
+        return
+    fi
     if [ -e /dev/nvidia0 ]; then
-        echo "NVIDIA GPU detected, using NVENC encoder"
+        log "NVIDIA device detected — using nvh264enc"
         export SELKIES_ENCODER=nvh264enc
-        export SELKIES_ENABLE_NVFBC=true
-        return
-    fi
-
-    # Check for Intel VA-API
-    if [ -e /dev/dri/renderD128 ]; then
-        echo "Intel/AMD GPU detected, using VA-API encoder"
+    elif [ -e /dev/dri/renderD128 ]; then
+        log "VA-API device detected — using vah264enc"
         export SELKIES_ENCODER=vah264enc
-        return
+    else
+        log "No GPU — falling back to x264enc (software encoding)"
+        export SELKIES_ENCODER=x264enc
     fi
-
-    # Fallback to software encoding
-    echo "No GPU detected, using software x264 encoder"
-    export SELKIES_ENCODER=x264enc
 }
-
 configure_encoder
 
-# Print configuration
-echo "================================================"
-echo "StreamSpace Chrome Selkies Container"
-echo "================================================"
-echo "Display: ${DISPLAY_SIZEW}x${DISPLAY_SIZEH}@${DISPLAY_REFRESH}Hz"
-echo "Encoder: ${SELKIES_ENCODER}"
-echo "Audio: ${SELKIES_ENABLE_AUDIO}"
-echo "Port: ${WEBRTC_PORT}"
-echo "================================================"
+# ---------------------------------------------------------------------------
+# 2. Xvfb
+# ---------------------------------------------------------------------------
+log "Starting Xvfb on ${DISPLAY} at ${DISPLAY_SIZEW}x${DISPLAY_SIZEH}@${DISPLAY_REFRESH}"
+Xvfb "${DISPLAY}" \
+    -screen 0 "${DISPLAY_SIZEW}x${DISPLAY_SIZEH}x${DISPLAY_CDEPTH}" \
+    -dpi "${DISPLAY_DPI}" \
+    +extension RANDR +extension GLX +extension Composite \
+    -nolisten tcp \
+    >/tmp/xvfb.log 2>&1 &
+XVFB_PID=$!
 
-# Start Selkies-GStreamer
+# Wait for X to be ready
+for _ in $(seq 1 30); do
+    if xdpyinfo -display "${DISPLAY}" >/dev/null 2>&1; then
+        log "Xvfb is ready"
+        break
+    fi
+    sleep 0.2
+done
+if ! xdpyinfo -display "${DISPLAY}" >/dev/null 2>&1; then
+    log "ERROR: Xvfb did not become ready"
+    cat /tmp/xvfb.log >&2 || true
+    exit 1
+fi
+
+# ---------------------------------------------------------------------------
+# 3. PulseAudio (user-mode; no network listener)
+# ---------------------------------------------------------------------------
+if [ "${SELKIES_ENABLE_AUDIO:-true}" = "true" ]; then
+    log "Starting PulseAudio (user mode)"
+    mkdir -p "${HOME}/.config/pulse"
+    pulseaudio --start --exit-idle-time=-1 --disallow-exit \
+        --log-target=file:/tmp/pulseaudio.log >/dev/null 2>&1 || \
+        log "WARN: pulseaudio start failed — audio will be unavailable"
+fi
+
+# ---------------------------------------------------------------------------
+# 4. Launch the app (default: Chrome)
+# ---------------------------------------------------------------------------
+APP_CMD=( "$@" )
+if [ "${#APP_CMD[@]}" -eq 0 ]; then
+    APP_CMD=( google-chrome-stable --start-maximized )
+fi
+
+# Splice the standard CHROME_FLAGS into the chrome invocation when running Chrome.
+if [[ "${APP_CMD[0]}" == *chrome* ]] || [[ "${APP_CMD[0]}" == *chromium* ]]; then
+    # shellcheck disable=SC2206
+    EXTRA_FLAGS=( ${CHROME_FLAGS:-} )
+    APP_CMD=( "${APP_CMD[0]}" "${EXTRA_FLAGS[@]}" "${APP_CMD[@]:1}" )
+fi
+
+log "Launching app: ${APP_CMD[*]}"
+DISPLAY="${DISPLAY}" "${APP_CMD[@]}" >/tmp/app.log 2>&1 &
+APP_PID=$!
+
+# ---------------------------------------------------------------------------
+# 5. Selkies-GStreamer in the foreground
+# ---------------------------------------------------------------------------
+log "================================================"
+log "StreamSpace Chrome Selkies"
+log "  Display:     ${DISPLAY_SIZEW}x${DISPLAY_SIZEH}@${DISPLAY_REFRESH}Hz"
+log "  Encoder:     ${SELKIES_ENCODER}"
+log "  Audio:       ${SELKIES_ENABLE_AUDIO}"
+log "  Port:        ${WEBRTC_PORT}"
+log "  App PID:     ${APP_PID}"
+log "  Xvfb PID:    ${XVFB_PID}"
+log "================================================"
+
+# selkies-gstreamer reads SELKIES_* env vars for most settings. The CLI
+# flags below are just the ones that don't have a corresponding env var
+# (or that we want to pin explicitly).
+#
+# Note: v1.6.2 does NOT accept --enable_audio as a CLI flag; audio is
+# always enabled and controlled via SELKIES_AUDIO_* env vars.
 exec selkies-gstreamer \
-    --enable_audio=${SELKIES_ENABLE_AUDIO} \
-    --enable_basic_auth=${SELKIES_ENABLE_BASIC_AUTH:-false} \
-    --encoder=${SELKIES_ENCODER} \
-    --port=${WEBRTC_PORT} \
-    "$@"
+    --addr=0.0.0.0 \
+    --port="${WEBRTC_PORT}" \
+    --enable_basic_auth="${SELKIES_ENABLE_BASIC_AUTH}" \
+    --encoder="${SELKIES_ENCODER}" \
+    --enable_resize="${SELKIES_ENABLE_RESIZE}"
