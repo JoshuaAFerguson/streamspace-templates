@@ -3,13 +3,14 @@ kind: Template
 metadata:
   name: xemu
   namespace: workspaces
+  annotations:
+    streamspace.dev/image-status: pending-migration
 spec:
   displayName: Xemu
-  description: '[xemu] is a free and open-source application that emulates the original
+  description: xemu is a free and open-source application that emulates the original
     Microsoft Xbox game console, enabling people to play their original Xbox games
-    on Windows, macOS, and Linux systems.'
+    on Windows, macOS, and Linux systems.
   category: Gaming
-  icon: https://raw.githubusercontent.com/linuxserver/docker-templates/master/linuxserver.io/img/xemu-logo.png
   baseImage: lscr.io/linuxserver/xemu:latest
   defaultResources:
     memory: 4Gi
@@ -28,9 +29,6 @@ spec:
   volumeMounts:
   - name: user-home
     mountPath: /config
-  kasmvnc:
-    enabled: true
-    port: 3000
   capabilities:
   - Network
   - Clipboard

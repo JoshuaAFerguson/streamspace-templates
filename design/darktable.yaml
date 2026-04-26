@@ -3,14 +3,15 @@ kind: Template
 metadata:
   name: darktable
   namespace: workspaces
+  annotations:
+    streamspace.dev/image-status: pending-migration
 spec:
   displayName: Darktable
-  description: '[darktable] is an open source photography workflow application and
-    raw developer. A virtual lighttable and darkroom for photographers. It manages
-    your digital negatives in a database, lets you view them through a zoomable lighttable
-    and enables you to develop raw images and enhance them.'
+  description: darktable is an open source photography workflow application and raw
+    developer. A virtual lighttable and darkroom for photographers. It manages your
+    digital negatives in a database, lets you view them through a zoomable lighttable
+    and enables you to develop raw images and enhance them.
   category: Design & Graphics
-  icon: https://raw.githubusercontent.com/linuxserver/docker-templates/master/linuxserver.io/img/darktable-logo.png
   baseImage: lscr.io/linuxserver/darktable:latest
   defaultResources:
     memory: 4Gi
@@ -29,12 +30,9 @@ spec:
   volumeMounts:
   - name: user-home
     mountPath: /config
-  kasmvnc:
-    enabled: true
-    port: 3000
   capabilities:
   - Network
   - Clipboard
   tags:
   - darktable
-  - design & graphics
+  - design--graphics

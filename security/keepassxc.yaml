@@ -3,12 +3,13 @@ kind: Template
 metadata:
   name: keepassxc
   namespace: workspaces
+  annotations:
+    streamspace.dev/image-status: pending-migration
 spec:
   displayName: Keepassxc
-  description: '[KeePassXC] is a free and open-source password manager. It started
-    as a community fork of KeePassX (itself a cross-platform port of KeePass).'
+  description: KeePassXC is a free and open-source password manager. It started as
+    a community fork of KeePassX (itself a cross-platform port of KeePass).
   category: Security
-  icon: https://raw.githubusercontent.com/linuxserver/docker-templates/master/linuxserver.io/img/keepassxc-logo.png
   baseImage: lscr.io/linuxserver/keepassxc:latest
   defaultResources:
     memory: 2Gi
@@ -27,9 +28,6 @@ spec:
   volumeMounts:
   - name: user-home
     mountPath: /config
-  kasmvnc:
-    enabled: false
-    port: 8080
   capabilities:
   - Network
   - Clipboard

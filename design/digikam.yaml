@@ -3,11 +3,12 @@ kind: Template
 metadata:
   name: digikam
   namespace: workspaces
+  annotations:
+    streamspace.dev/image-status: pending-migration
 spec:
   displayName: Digikam
-  description: '[digiKam]: Professional Photo Management with the Power of Open Source'
+  description: 'digiKam : Professional Photo Management with the Power of Open Source'
   category: Design & Graphics
-  icon: https://raw.githubusercontent.com/linuxserver/docker-templates/master/linuxserver.io/img/digikam-logo.png
   baseImage: lscr.io/linuxserver/digikam:latest
   defaultResources:
     memory: 4Gi
@@ -26,12 +27,9 @@ spec:
   volumeMounts:
   - name: user-home
     mountPath: /config
-  kasmvnc:
-    enabled: true
-    port: 3000
   capabilities:
   - Network
   - Clipboard
   tags:
   - digikam
-  - design & graphics
+  - design--graphics

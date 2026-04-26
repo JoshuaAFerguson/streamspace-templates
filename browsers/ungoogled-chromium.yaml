@@ -3,12 +3,13 @@ kind: Template
 metadata:
   name: ungoogled-chromium
   namespace: workspaces
+  annotations:
+    streamspace.dev/image-status: pending-migration
 spec:
   displayName: Ungoogled-Chromium
-  description: '[Ungoogled Chromium] is Google Chromium, sans dependency on Google
-    web services.'
+  description: Ungoogled Chromium is Google Chromium, sans dependency on Google web
+    services.
   category: Web Browsers
-  icon: https://raw.githubusercontent.com/linuxserver/docker-templates/master/linuxserver.io/img/ungoogled-chromium-logo.png
   baseImage: lscr.io/linuxserver/ungoogled-chromium:latest
   defaultResources:
     memory: 2Gi
@@ -27,12 +28,9 @@ spec:
   volumeMounts:
   - name: user-home
     mountPath: /config
-  kasmvnc:
-    enabled: true
-    port: 3000
   capabilities:
   - Network
   - Clipboard
   tags:
   - ungoogled-chromium
-  - web browsers
+  - web-browsers

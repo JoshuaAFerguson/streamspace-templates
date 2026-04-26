@@ -3,12 +3,13 @@ kind: Template
 metadata:
   name: gzdoom
   namespace: workspaces
+  annotations:
+    streamspace.dev/image-status: pending-migration
 spec:
   displayName: Gzdoom
-  description: '[GZDoom] is a feature centric port for all Doom engine games, based
-    on ZDoom, adding an OpenGL renderer and powerful scripting capabilities.'
+  description: GZDoom is a feature centric port for all Doom engine games, based on
+    ZDoom, adding an OpenGL renderer and powerful scripting capabilities.
   category: Gaming
-  icon: https://raw.githubusercontent.com/linuxserver/docker-templates/master/linuxserver.io/img/gzdoom-logo.png
   baseImage: lscr.io/linuxserver/gzdoom:latest
   defaultResources:
     memory: 4Gi
@@ -27,9 +28,6 @@ spec:
   volumeMounts:
   - name: user-home
     mountPath: /config
-  kasmvnc:
-    enabled: true
-    port: 3000
   capabilities:
   - Network
   - Clipboard

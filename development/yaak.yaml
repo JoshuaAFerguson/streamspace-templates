@@ -3,13 +3,14 @@ kind: Template
 metadata:
   name: yaak
   namespace: workspaces
+  annotations:
+    streamspace.dev/image-status: pending-migration
 spec:
   displayName: Yaak
   description: yaak is a desktop API client for organizing and executing REST, GraphQL,
     and gRPC requests. It's built using [Tauri](https://tauri.app/), [Rust](https://www.rust-lang.org/),
     and [ReactJS](https://react.dev/).
   category: Development
-  icon: https://raw.githubusercontent.com/linuxserver/docker-templates/master/linuxserver.io/img/yaak-logo.png
   baseImage: lscr.io/linuxserver/yaak:latest
   defaultResources:
     memory: 4Gi
@@ -28,9 +29,6 @@ spec:
   volumeMounts:
   - name: user-home
     mountPath: /config
-  kasmvnc:
-    enabled: true
-    port: 3000
   capabilities:
   - Network
   - Clipboard

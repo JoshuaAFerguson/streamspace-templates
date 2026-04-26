@@ -3,12 +3,13 @@ kind: Template
 metadata:
   name: vivaldi
   namespace: workspaces
+  annotations:
+    streamspace.dev/image-status: pending-migration
 spec:
   displayName: Vivaldi
-  description: '[Vivaldi] is a Norwegian freeware, cross-platform web browser with
-    a built-in email client developed by Vivaldi Technologies.'
+  description: Vivaldi is a Norwegian freeware, cross-platform web browser with a
+    built-in email client developed by Vivaldi Technologies.
   category: Web Browsers
-  icon: https://raw.githubusercontent.com/linuxserver/docker-templates/master/linuxserver.io/img/vivaldi-logo.png
   baseImage: lscr.io/linuxserver/vivaldi:latest
   defaultResources:
     memory: 2Gi
@@ -27,12 +28,9 @@ spec:
   volumeMounts:
   - name: user-home
     mountPath: /config
-  kasmvnc:
-    enabled: true
-    port: 3000
   capabilities:
   - Network
   - Clipboard
   tags:
   - vivaldi
-  - web browsers
+  - web-browsers

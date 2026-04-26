@@ -3,12 +3,13 @@ kind: Template
 metadata:
   name: bitcoin-knots
   namespace: workspaces
+  annotations:
+    streamspace.dev/image-status: pending-migration
 spec:
   displayName: Bitcoin-Knots
-  description: '[Bitcoin Knots] can be used as a desktop client for regular payments
-    or as a full node server utility for merchants and other payment services.'
+  description: Bitcoin Knots can be used as a desktop client for regular payments
+    or as a full node server utility for merchants and other payment services.
   category: Productivity
-  icon: https://raw.githubusercontent.com/linuxserver/docker-templates/master/linuxserver.io/img/bitcoin-knots-logo.png
   baseImage: lscr.io/linuxserver/bitcoin-knots:latest
   defaultResources:
     memory: 3Gi
@@ -27,9 +28,6 @@ spec:
   volumeMounts:
   - name: user-home
     mountPath: /config
-  kasmvnc:
-    enabled: true
-    port: 3000
   capabilities:
   - Network
   - Clipboard

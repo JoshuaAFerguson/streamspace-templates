@@ -3,15 +3,16 @@ kind: Template
 metadata:
   name: webcord
   namespace: workspaces
+  annotations:
+    streamspace.dev/image-status: pending-migration
 spec:
   displayName: Webcord
-  description: '[WebCord] can be summarized as a pack of security and privacy hardenings,
+  description: WebCord can be summarized as a pack of security and privacy hardenings,
     Discord features reimplementations, Electron / Chromium / Discord bugs workarounds,
     stylesheets, internal pages and wrapped https://discord.com page, designed to
     conform with ToS as much as it is possible (or hide the changes that might violate
-    it from Discord''s eyes).'
+    it from Discord's eyes).
   category: Chat
-  icon: https://raw.githubusercontent.com/linuxserver/docker-templates/master/linuxserver.io/img/webcord-logo.png
   baseImage: lscr.io/linuxserver/webcord:latest
   defaultResources:
     memory: 2Gi
@@ -30,9 +31,6 @@ spec:
   volumeMounts:
   - name: user-home
     mountPath: /config
-  kasmvnc:
-    enabled: false
-    port: 8080
   capabilities:
   - Network
   - Clipboard

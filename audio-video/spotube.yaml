@@ -3,13 +3,14 @@ kind: Template
 metadata:
   name: spotube
   namespace: workspaces
+  annotations:
+    streamspace.dev/image-status: pending-migration
 spec:
   displayName: Spotube
-  description: '[Spotube] is an open source, cross-platform Spotify client compatible
-    across multiple platforms utilizing Spotify''s data API and YouTube, Piped.video
-    or JioSaavn as an audio source, eliminating the need for Spotify Premium'
+  description: Spotube is an open source, cross-platform Spotify client compatible
+    across multiple platforms utilizing Spotify's data API and YouTube, Piped.video
+    or JioSaavn as an audio source, eliminating the need for Spotify Premium
   category: Media
-  icon: https://raw.githubusercontent.com/linuxserver/docker-templates/master/linuxserver.io/img/spotube-logo.png
   baseImage: lscr.io/linuxserver/spotube:latest
   defaultResources:
     memory: 2Gi
@@ -28,9 +29,6 @@ spec:
   volumeMounts:
   - name: user-home
     mountPath: /config
-  kasmvnc:
-    enabled: false
-    port: 8080
   capabilities:
   - Network
   - Clipboard

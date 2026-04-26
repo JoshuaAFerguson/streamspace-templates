@@ -3,13 +3,14 @@ kind: Template
 metadata:
   name: mame
   namespace: workspaces
+  annotations:
+    streamspace.dev/image-status: pending-migration
 spec:
   displayName: Mame
-  description: '[MAME] is a free and open-source emulator designed to emulate the
-    hardware of arcade games, video game consoles, old computers and other systems
-    in software on modern personal computers.'
+  description: MAME is a free and open-source emulator designed to emulate the hardware
+    of arcade games, video game consoles, old computers and other systems in software
+    on modern personal computers.
   category: Gaming
-  icon: https://raw.githubusercontent.com/linuxserver/docker-templates/master/linuxserver.io/img/mame-logo.png
   baseImage: lscr.io/linuxserver/mame:latest
   defaultResources:
     memory: 4Gi
@@ -28,9 +29,6 @@ spec:
   volumeMounts:
   - name: user-home
     mountPath: /config
-  kasmvnc:
-    enabled: true
-    port: 3000
   capabilities:
   - Network
   - Clipboard

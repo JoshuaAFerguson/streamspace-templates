@@ -3,12 +3,13 @@ kind: Template
 metadata:
   name: lollypop
   namespace: workspaces
+  annotations:
+    streamspace.dev/image-status: pending-migration
 spec:
   displayName: Lollypop
-  description: '[Lollypop] is a lightweight modern music player designed to work excellently
-    on the GNOME desktop environment.'
+  description: Lollypop is a lightweight modern music player designed to work excellently
+    on the GNOME desktop environment.
   category: Media
-  icon: https://raw.githubusercontent.com/linuxserver/docker-templates/master/linuxserver.io/img/lollypop-logo.png
   baseImage: lscr.io/linuxserver/lollypop:latest
   defaultResources:
     memory: 2Gi
@@ -27,9 +28,6 @@ spec:
   volumeMounts:
   - name: user-home
     mountPath: /config
-  kasmvnc:
-    enabled: true
-    port: 3000
   capabilities:
   - Network
   - Clipboard

@@ -3,12 +3,13 @@ kind: Template
 metadata:
   name: webtop
   namespace: workspaces
+  annotations:
+    streamspace.dev/image-status: pending-migration
 spec:
   displayName: Webtop
   description: Full Linux desktop environment accessible via web browser. Available
     in multiple distributions and desktop environments.
   category: Remote Desktop
-  icon: https://raw.githubusercontent.com/linuxserver/docker-templates/master/linuxserver.io/img/webtop-logo.png
   baseImage: lscr.io/linuxserver/webtop:latest
   defaultResources:
     memory: 4Gi
@@ -27,12 +28,9 @@ spec:
   volumeMounts:
   - name: user-home
     mountPath: /config
-  kasmvnc:
-    enabled: true
-    port: 3000
   capabilities:
   - Network
   - Clipboard
   tags:
   - webtop
-  - remote desktop
+  - remote-desktop

@@ -3,12 +3,13 @@ kind: Template
 metadata:
   name: ferdium
   namespace: workspaces
+  annotations:
+    streamspace.dev/image-status: pending-migration
 spec:
   displayName: Ferdium
-  description: '[Ferdium] is a desktop app that helps you organize how you use your
-    favourite apps by combining them into one application.'
+  description: Ferdium is a desktop app that helps you organize how you use your favourite
+    apps by combining them into one application.
   category: Chat,Social
-  icon: https://raw.githubusercontent.com/linuxserver/docker-templates/master/linuxserver.io/img/ferdium-logo.png
   baseImage: lscr.io/linuxserver/ferdium:latest
   defaultResources:
     memory: 2Gi
@@ -27,12 +28,9 @@ spec:
   volumeMounts:
   - name: user-home
     mountPath: /config
-  kasmvnc:
-    enabled: true
-    port: 3000
   capabilities:
   - Network
   - Clipboard
   tags:
   - ferdium
-  - chat,social
+  - chatsocial

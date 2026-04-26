@@ -3,12 +3,13 @@ kind: Template
 metadata:
   name: altus
   namespace: workspaces
+  annotations:
+    streamspace.dev/image-status: pending-migration
 spec:
   displayName: Altus
-  description: '[Altus] is an Electron-based WhatsApp client with themes and multiple
-    account support.'
+  description: Altus is an Electron-based WhatsApp client with themes and multiple
+    account support.
   category: Chat
-  icon: https://raw.githubusercontent.com/linuxserver/docker-templates/master/linuxserver.io/img/altus-logo.png
   baseImage: lscr.io/linuxserver/altus:latest
   defaultResources:
     memory: 2Gi
@@ -27,9 +28,6 @@ spec:
   volumeMounts:
   - name: user-home
     mountPath: /config
-  kasmvnc:
-    enabled: false
-    port: 8080
   capabilities:
   - Network
   - Clipboard
