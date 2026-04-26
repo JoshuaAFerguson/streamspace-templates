@@ -1,0 +1,48 @@
+apiVersion: stream.space/v1alpha1
+kind: Template
+metadata:
+  name: audacity-selkies
+  namespace: workspaces
+  labels:
+    app.kubernetes.io/name: audacity-selkies
+    app.kubernetes.io/component: template
+    streamspace.io/category: audio-video
+    streamspace.io/streaming-protocol: selkies
+  annotations:
+    streamspace.dev/image-status: published
+spec:
+  displayName: Audacity
+  description: Audacity multi-track audio editor streamed via Selkies-GStreamer (WebRTC).
+  category: Audio & Video
+  icon: https://raw.githubusercontent.com/streamspace-dev/streamspace/main/ui/public/icons/audacity.svg
+  baseImage: ghcr.io/streamspace-dev/audacity-selkies:latest
+  streamingProtocol: selkies
+  defaultResources:
+    requests:
+      memory: 3Gi
+      cpu: 1500m
+    limits:
+      memory: 3Gi
+      cpu: 3000m
+  ports:
+  - name: selkies
+    containerPort: 8080
+    protocol: TCP
+  env:
+  - name: TZ
+    value: UTC
+  - name: DISPLAY_SIZEW
+    value: '1920'
+  - name: DISPLAY_SIZEH
+    value: '1080'
+  - name: SELKIES_ENABLE_AUDIO
+    value: 'true'
+  capabilities:
+  - Network
+  - Audio
+  - Clipboard
+  tags:
+  - audio
+  - editor
+  - audacity
+  - selkies
