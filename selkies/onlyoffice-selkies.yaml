@@ -1,0 +1,47 @@
+apiVersion: stream.space/v1alpha1
+kind: Template
+metadata:
+  name: onlyoffice-selkies
+  namespace: workspaces
+  labels:
+    app.kubernetes.io/name: onlyoffice-selkies
+    app.kubernetes.io/component: template
+    streamspace.io/category: productivity
+    streamspace.io/streaming-protocol: selkies
+  annotations:
+    streamspace.dev/image-status: published
+spec:
+  displayName: OnlyOffice
+  description: OnlyOffice Desktop Editors (MS Office-compatible suite — Documents, Spreadsheets, Presentations) streamed via Selkies-GStreamer (WebRTC).
+  category: Productivity
+  icon: https://raw.githubusercontent.com/streamspace-dev/streamspace/main/ui/public/icons/onlyoffice.svg
+  baseImage: ghcr.io/streamspace-dev/onlyoffice-selkies:latest
+  streamingProtocol: selkies
+  defaultResources:
+    requests:
+      memory: 3Gi
+      cpu: 1500m
+    limits:
+      memory: 3Gi
+      cpu: 3000m
+  ports:
+  - name: selkies
+    containerPort: 8080
+    protocol: TCP
+  env:
+  - name: TZ
+    value: UTC
+  - name: DISPLAY_SIZEW
+    value: '1920'
+  - name: DISPLAY_SIZEH
+    value: '1080'
+  - name: SELKIES_ENABLE_AUDIO
+    value: 'false'
+  capabilities:
+  - Network
+  - Clipboard
+  tags:
+  - productivity
+  - office
+  - onlyoffice
+  - selkies
