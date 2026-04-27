@@ -42,7 +42,10 @@ ARG TARGETARCH
 
 LABEL org.opencontainers.image.title="StreamSpace Selkies Base"
 LABEL org.opencontainers.image.description="Selkies-GStreamer base image for StreamSpace per-app images"
-LABEL org.opencontainers.image.version="1.6.2"
+# Image version is independent of Selkies upstream version (still 1.6.2);
+# bumps only when our base configuration changes (added system deps,
+# entrypoint changes, etc.).
+LABEL org.opencontainers.image.version="1.6.3"
 LABEL org.opencontainers.image.vendor="StreamSpace"
 LABEL org.opencontainers.image.source="https://github.com/streamspace-dev/streamspace-templates"
 
@@ -119,12 +122,23 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
         libgtk-3-0 \
         libnspr4 \
         libnss3 \
+        # libopengl0 — the OpenGL ICD loader, distinct from the Mesa
+        # GL implementation (libgl1-mesa-dri). AppImages and Qt apps
+        # treat libOpenGL.so.0 as a system dep and don't bundle it;
+        # without this we hit "libOpenGL.so.0: cannot open shared
+        # object file" at runtime. Surfaced via zoom + 3 emulators.
+        libopengl0 \
         libxcomposite1 \
         libxdamage1 \
         libxfixes3 \
         libxkbcommon0 \
         libxrandr2 \
         xdg-utils \
+        # yaru-theme-icon — Ubuntu's default GTK icon theme is "Yaru".
+        # GTK apps that look up icons by name (e.g. 'image-missing')
+        # SIGABRT when the named theme isn't present rather than
+        # falling back to Adwaita. Surfaced via xournalpp.
+        yaru-theme-icon \
     && locale-gen en_US.UTF-8 \
     && apt-get clean \
     && rm -rf /var/lib/apt/lists/*
