@@ -7,7 +7,7 @@ FROM ghcr.io/streamspace-dev/selkies-base:latest
 
 LABEL org.opencontainers.image.title="StreamSpace Zoom"
 LABEL org.opencontainers.image.description="Zoom video conferencing with Selkies-GStreamer (WebRTC) streaming for StreamSpace"
-LABEL org.opencontainers.image.version="1.0.0"
+LABEL org.opencontainers.image.version="1.0.1"
 LABEL org.opencontainers.image.vendor="StreamSpace"
 LABEL org.opencontainers.image.source="https://github.com/streamspace-dev/streamspace-templates"
 
@@ -17,10 +17,7 @@ ARG DEBIAN_FRONTEND=noninteractive
 RUN set -eux; \
     curl -fsSL -o /tmp/zoom.deb "https://zoom.us/client/latest/zoom_amd64.deb"; \
     apt-get update; \
-    # Zoom's .deb under-declares libopengl0 — install it explicitly so
-    # /opt/zoom/zoom doesn't error with "libOpenGL.so.0: cannot open
-    # shared object file".
-    apt-get install -y --no-install-recommends /tmp/zoom.deb libopengl0; \
+    apt-get install -y --no-install-recommends /tmp/zoom.deb; \
     rm -f /tmp/zoom.deb; \
     apt-get clean && rm -rf /var/lib/apt/lists/*
 
