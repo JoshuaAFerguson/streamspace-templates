@@ -1,0 +1,48 @@
+apiVersion: stream.space/v1alpha1
+kind: Template
+metadata:
+  name: lmms-selkies
+  namespace: workspaces
+  labels:
+    app.kubernetes.io/name: lmms-selkies
+    app.kubernetes.io/component: template
+    streamspace.io/category: audio-video
+    streamspace.io/streaming-protocol: selkies
+  annotations:
+    streamspace.dev/image-status: published
+spec:
+  displayName: LMMS
+  description: LMMS (Linux Multimedia Studio) music production app streamed via Selkies-GStreamer (WebRTC).
+  category: Audio & Video
+  icon: https://raw.githubusercontent.com/streamspace-dev/streamspace/main/ui/public/icons/lmms.svg
+  baseImage: ghcr.io/streamspace-dev/lmms-selkies:latest
+  streamingProtocol: selkies
+  defaultResources:
+    requests:
+      memory: 4Gi
+      cpu: 2000m
+    limits:
+      memory: 4Gi
+      cpu: 4000m
+  ports:
+  - name: selkies
+    containerPort: 8080
+    protocol: TCP
+  env:
+  - name: TZ
+    value: UTC
+  - name: DISPLAY_SIZEW
+    value: '1920'
+  - name: DISPLAY_SIZEH
+    value: '1080'
+  - name: SELKIES_ENABLE_AUDIO
+    value: 'true'
+  capabilities:
+  - Network
+  - Audio
+  - Clipboard
+  tags:
+  - audio-video
+  - music-production
+  - lmms
+  - selkies
