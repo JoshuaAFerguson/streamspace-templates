@@ -9,19 +9,14 @@ FROM ghcr.io/streamspace-dev/selkies-base:latest
 
 LABEL org.opencontainers.image.title="StreamSpace RPCS3"
 LABEL org.opencontainers.image.description="RPCS3 PS3 emulator with Selkies-GStreamer (WebRTC) streaming for StreamSpace"
-LABEL org.opencontainers.image.version="1.0.0"
+LABEL org.opencontainers.image.version="1.0.1"
 LABEL org.opencontainers.image.vendor="StreamSpace"
 LABEL org.opencontainers.image.source="https://github.com/streamspace-dev/streamspace-templates"
 
 USER root
 ARG DEBIAN_FRONTEND=noninteractive
 
-# libopengl0: AppImages don't bundle system OpenGL — same fix as
-# zoom/pcsx2/duckstation. Without this, RPCS3 errors with
-# "libOpenGL.so.0: cannot open shared object file".
 RUN set -eux; \
-    apt-get update && apt-get install -y --no-install-recommends libopengl0; \
-    apt-get clean && rm -rf /var/lib/apt/lists/*; \
     img_url="$(curl -fsSL https://api.github.com/repos/RPCS3/rpcs3-binaries-linux/releases/latest \
         | jq -r '.assets[] | select(.name | endswith("_linux64.AppImage")) | .browser_download_url' \
         | head -1)"; \
