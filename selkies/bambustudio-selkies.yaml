@@ -1,0 +1,48 @@
+apiVersion: stream.space/v1alpha1
+kind: Template
+metadata:
+  name: bambustudio-selkies
+  namespace: workspaces
+  labels:
+    app.kubernetes.io/name: bambustudio-selkies
+    app.kubernetes.io/component: template
+    streamspace.io/category: design-graphics
+    streamspace.io/streaming-protocol: selkies
+  annotations:
+    streamspace.dev/image-status: published
+spec:
+  displayName: Bambu Studio
+  description: Bambu Studio FDM 3D printer slicer (PrusaSlicer fork tuned for Bambu Lab printers) streamed via Selkies-GStreamer (WebRTC).
+  category: Design & Graphics
+  icon: https://raw.githubusercontent.com/streamspace-dev/streamspace/main/ui/public/icons/bambustudio.svg
+  baseImage: ghcr.io/streamspace-dev/bambustudio-selkies:latest
+  streamingProtocol: selkies
+  defaultResources:
+    requests:
+      memory: 4Gi
+      cpu: 2000m
+    limits:
+      memory: 8Gi
+      cpu: 4000m
+  ports:
+  - name: selkies
+    containerPort: 8080
+    protocol: TCP
+  env:
+  - name: TZ
+    value: UTC
+  - name: DISPLAY_SIZEW
+    value: '1920'
+  - name: DISPLAY_SIZEH
+    value: '1080'
+  - name: SELKIES_ENABLE_AUDIO
+    value: 'false'
+  capabilities:
+  - Network
+  - Clipboard
+  tags:
+  - design
+  - 3d-printing
+  - slicer
+  - bambustudio
+  - selkies
