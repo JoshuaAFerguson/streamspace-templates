@@ -1,0 +1,50 @@
+apiVersion: stream.space/v1alpha1
+kind: Template
+metadata:
+  name: librewolf-selkies
+  namespace: workspaces
+  labels:
+    app.kubernetes.io/name: librewolf-selkies
+    app.kubernetes.io/component: template
+    streamspace.io/category: web-browsers
+    streamspace.io/streaming-protocol: selkies
+  annotations:
+    streamspace.dev/image-status: published
+spec:
+  displayName: LibreWolf
+  description: LibreWolf privacy-hardened Firefox fork streamed via Selkies-GStreamer (WebRTC).
+  category: Web Browsers
+  icon: https://raw.githubusercontent.com/streamspace-dev/streamspace/main/ui/public/icons/librewolf.svg
+  baseImage: ghcr.io/streamspace-dev/librewolf-selkies:latest
+  streamingProtocol: selkies
+  defaultResources:
+    requests:
+      memory: 2Gi
+      cpu: 1000m
+    limits:
+      memory: 2Gi
+      cpu: 2000m
+  ports:
+  - name: selkies
+    containerPort: 8080
+    protocol: TCP
+  env:
+  - name: TZ
+    value: UTC
+  - name: DISPLAY_SIZEW
+    value: '1920'
+  - name: DISPLAY_SIZEH
+    value: '1080'
+  - name: SELKIES_ENABLE_AUDIO
+    value: 'true'
+  capabilities:
+  - Network
+  - Audio
+  - Clipboard
+  tags:
+  - browser
+  - web
+  - privacy
+  - firefox-fork
+  - librewolf
+  - selkies
