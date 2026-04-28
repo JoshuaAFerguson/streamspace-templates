@@ -1,0 +1,49 @@
+apiVersion: stream.space/v1alpha1
+kind: Template
+metadata:
+  name: xemu-selkies
+  namespace: workspaces
+  labels:
+    app.kubernetes.io/name: xemu-selkies
+    app.kubernetes.io/component: template
+    streamspace.io/category: gaming
+    streamspace.io/streaming-protocol: selkies
+  annotations:
+    streamspace.dev/image-status: published
+spec:
+  displayName: xemu
+  description: xemu original Xbox emulator streamed via Selkies-GStreamer (WebRTC). Bring your own Xbox MCPX BIOS dump, HDD image, and game files.
+  category: Gaming
+  icon: https://raw.githubusercontent.com/streamspace-dev/streamspace/main/ui/public/icons/xemu.svg
+  baseImage: ghcr.io/streamspace-dev/xemu-selkies:latest
+  streamingProtocol: selkies
+  defaultResources:
+    requests:
+      memory: 4Gi
+      cpu: 2000m
+    limits:
+      memory: 8Gi
+      cpu: 4000m
+  ports:
+  - name: selkies
+    containerPort: 8080
+    protocol: TCP
+  env:
+  - name: TZ
+    value: UTC
+  - name: DISPLAY_SIZEW
+    value: '1920'
+  - name: DISPLAY_SIZEH
+    value: '1080'
+  - name: SELKIES_ENABLE_AUDIO
+    value: 'true'
+  capabilities:
+  - Network
+  - Audio
+  - Clipboard
+  tags:
+  - gaming
+  - emulator
+  - xbox
+  - xemu
+  - selkies
