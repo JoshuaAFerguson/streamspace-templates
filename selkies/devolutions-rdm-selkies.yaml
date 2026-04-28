@@ -6,8 +6,8 @@ metadata:
   labels:
     app.kubernetes.io/name: devolutions-rdm-selkies
     app.kubernetes.io/component: template
-    streamspace.io/category: remote-desktop
-    streamspace.io/streaming-protocol: selkies
+    streamspace.dev/category: remote-desktop
+    streamspace.dev/streaming-protocol: selkies
   annotations:
     streamspace.dev/image-status: published
 spec:

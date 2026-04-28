@@ -6,8 +6,8 @@ metadata:
   labels:
     app.kubernetes.io/name: altus-selkies
     app.kubernetes.io/component: template
-    streamspace.io/category: communication
-    streamspace.io/streaming-protocol: selkies
+    streamspace.dev/category: communication
+    streamspace.dev/streaming-protocol: selkies
   annotations:
     streamspace.dev/image-status: published
 spec:

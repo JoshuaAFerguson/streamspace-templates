@@ -6,8 +6,8 @@ metadata:
   labels:
     app.kubernetes.io/name: prusaslicer-selkies
     app.kubernetes.io/component: template
-    streamspace.io/category: design-graphics
-    streamspace.io/streaming-protocol: selkies
+    streamspace.dev/category: design-graphics
+    streamspace.dev/streaming-protocol: selkies
   annotations:
     streamspace.dev/image-status: published
 spec:
