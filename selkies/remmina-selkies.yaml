@@ -1,0 +1,49 @@
+apiVersion: stream.space/v1alpha1
+kind: Template
+metadata:
+  name: remmina-selkies
+  namespace: workspaces
+  labels:
+    app.kubernetes.io/name: remmina-selkies
+    app.kubernetes.io/component: template
+    streamspace.io/category: remote-desktop
+    streamspace.io/streaming-protocol: selkies
+  annotations:
+    streamspace.dev/image-status: published
+spec:
+  displayName: Remmina
+  description: Remmina GTK remote desktop client (RDP, VNC, SPICE, X2Go, SSH) streamed via Selkies-GStreamer (WebRTC).
+  category: Remote Desktop
+  icon: https://raw.githubusercontent.com/streamspace-dev/streamspace/main/ui/public/icons/remmina.svg
+  baseImage: ghcr.io/streamspace-dev/remmina-selkies:latest
+  streamingProtocol: selkies
+  defaultResources:
+    requests:
+      memory: 1Gi
+      cpu: 500m
+    limits:
+      memory: 2Gi
+      cpu: 1000m
+  ports:
+  - name: selkies
+    containerPort: 8080
+    protocol: TCP
+  env:
+  - name: TZ
+    value: UTC
+  - name: DISPLAY_SIZEW
+    value: '1920'
+  - name: DISPLAY_SIZEH
+    value: '1080'
+  - name: SELKIES_ENABLE_AUDIO
+    value: 'true'
+  capabilities:
+  - Network
+  - Audio
+  - Clipboard
+  tags:
+  - remote-desktop
+  - rdp
+  - vnc
+  - remmina
+  - selkies
