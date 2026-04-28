@@ -6,8 +6,8 @@ metadata:
   labels:
     app.kubernetes.io/name: bitcoin-knots-selkies
     app.kubernetes.io/component: template
-    streamspace.io/category: productivity
-    streamspace.io/streaming-protocol: selkies
+    streamspace.dev/category: productivity
+    streamspace.dev/streaming-protocol: selkies
   annotations:
     streamspace.dev/image-status: published
 spec:

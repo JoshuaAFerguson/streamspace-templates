@@ -6,8 +6,8 @@ metadata:
   labels:
     app.kubernetes.io/name: duckstation-selkies
     app.kubernetes.io/component: template
-    streamspace.io/category: gaming
-    streamspace.io/streaming-protocol: selkies
+    streamspace.dev/category: gaming
+    streamspace.dev/streaming-protocol: selkies
   annotations:
     streamspace.dev/image-status: published
 spec:

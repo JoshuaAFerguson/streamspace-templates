@@ -6,8 +6,8 @@ metadata:
   labels:
     app.kubernetes.io/name: audacity-selkies
     app.kubernetes.io/component: template
-    streamspace.io/category: audio-video
-    streamspace.io/streaming-protocol: selkies
+    streamspace.dev/category: audio-video
+    streamspace.dev/streaming-protocol: selkies
   annotations:
     streamspace.dev/image-status: published
 spec:

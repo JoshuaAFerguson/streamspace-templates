@@ -44,7 +44,7 @@ metadata:
   labels:
     app.kubernetes.io/name: streamspace-template
     app.kubernetes.io/component: template
-    streamspace.io/category: "Category Name"
+    streamspace.dev/category: "Category Name"
 spec:
   # Required fields
   displayName: "My Application"

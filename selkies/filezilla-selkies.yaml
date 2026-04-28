@@ -6,8 +6,8 @@ metadata:
   labels:
     app.kubernetes.io/name: filezilla-selkies
     app.kubernetes.io/component: template
-    streamspace.io/category: utilities
-    streamspace.io/streaming-protocol: selkies
+    streamspace.dev/category: utilities
+    streamspace.dev/streaming-protocol: selkies
   annotations:
     streamspace.dev/image-status: published
 spec:
