@@ -5,8 +5,12 @@
 #
 #   - Ubuntu 24.04 base + system deps (Xvfb, PulseAudio, GStreamer
 #     plugins, GLib/GI bindings, Chrome runtime libraries)
-#   - Selkies-GStreamer v${SELKIES_VERSION} from upstream tarballs
-#   - selkies-js-interposer .deb installed
+#   - Selkies-GStreamer GStreamer/web/.deb tarballs from the StreamSpace
+#     fork at streamspace-dev/selkies (${SELKIES_FORK_TAG}). The fork
+#     adds linux/arm64 to the GStreamer release matrix; upstream
+#     selkies-project only ships amd64.
+#   - Python wheel still pulled from upstream selkies-project (the
+#     fork didn't change the Python sources, only the build pipeline).
 #   - The standard `user` (uid/gid 1000) with audio+video group
 #     membership; ubuntu:24.04's default `ubuntu` user/group is
 #     dropped first to avoid the uid collision
@@ -37,7 +41,13 @@
 FROM ubuntu:24.04
 
 ARG DEBIAN_FRONTEND=noninteractive
+# SELKIES_VERSION = upstream Python wheel version (selkies-project/selkies).
+# The wheel is unchanged in our fork, so it still comes from upstream.
 ARG SELKIES_VERSION=1.6.2
+# SELKIES_FORK_TAG = streamspace-dev/selkies release tag, used for the
+# GStreamer / gst-web / js-interposer artifacts that DO differ from
+# upstream (the fork adds arm64 to the build matrix).
+ARG SELKIES_FORK_TAG=v1.6.2-streamspace.1
 ARG TARGETARCH
 
 LABEL org.opencontainers.image.title="StreamSpace Selkies Base"
@@ -45,7 +55,7 @@ LABEL org.opencontainers.image.description="Selkies-GStreamer base image for Str
 # Image version is independent of Selkies upstream version (still 1.6.2);
 # bumps only when our base configuration changes (added system deps,
 # entrypoint changes, etc.).
-LABEL org.opencontainers.image.version="1.6.3"
+LABEL org.opencontainers.image.version="1.6.4"
 LABEL org.opencontainers.image.vendor="StreamSpace"
 LABEL org.opencontainers.image.source="https://github.com/streamspace-dev/streamspace-templates"
 
@@ -148,8 +158,15 @@ ENV LANG=en_US.UTF-8 \
     LC_ALL=en_US.UTF-8
 
 # ---------------------------------------------------------------------------
-# Install Selkies-GStreamer from upstream release tarballs.
-# Pinned to ${SELKIES_VERSION}.
+# Install Selkies-GStreamer.
+#
+# GStreamer / gst-web / js-interposer come from the streamspace-dev/selkies
+# fork at ${SELKIES_FORK_TAG} — that fork's release matrix includes
+# linux/arm64 (built on native arm64 runners), which upstream
+# selkies-project/selkies doesn't ship.
+#
+# The Python wheel is unchanged from upstream so it still pulls from
+# selkies-project at ${SELKIES_VERSION}.
 # ---------------------------------------------------------------------------
 RUN set -eux; \
     arch="${TARGETARCH:-$(dpkg --print-architecture)}"; \
@@ -158,7 +175,7 @@ RUN set -eux; \
         *) echo "Unsupported architecture: ${arch}"; exit 1 ;; \
     esac; \
     cd /opt && \
-    curl -fsSL "https://github.com/selkies-project/selkies/releases/download/v${SELKIES_VERSION}/gstreamer-selkies_gpl_v${SELKIES_VERSION}_ubuntu24.04_${arch}.tar.gz" \
+    curl -fsSL "https://github.com/streamspace-dev/selkies/releases/download/${SELKIES_FORK_TAG}/gstreamer-selkies_gpl_${SELKIES_FORK_TAG}_ubuntu24.04_${arch}.tar.gz" \
         | tar -xzf -; \
     cd /tmp && \
     curl -fsSLO "https://github.com/selkies-project/selkies/releases/download/v${SELKIES_VERSION}/selkies_gstreamer-${SELKIES_VERSION}-py3-none-any.whl" && \
@@ -167,13 +184,13 @@ RUN set -eux; \
         "websockets<14.0" && \
     rm -f "selkies_gstreamer-${SELKIES_VERSION}-py3-none-any.whl"; \
     cd /opt && \
-    curl -fsSL "https://github.com/selkies-project/selkies/releases/download/v${SELKIES_VERSION}/selkies-gstreamer-web_v${SELKIES_VERSION}.tar.gz" \
+    curl -fsSL "https://github.com/streamspace-dev/selkies/releases/download/${SELKIES_FORK_TAG}/selkies-gstreamer-web_${SELKIES_FORK_TAG}.tar.gz" \
         | tar -xzf -; \
     cd /tmp && \
-    curl -fsSLO "https://github.com/selkies-project/selkies/releases/download/v${SELKIES_VERSION}/selkies-js-interposer_v${SELKIES_VERSION}_ubuntu24.04_${arch}.deb" && \
+    curl -fsSLO "https://github.com/streamspace-dev/selkies/releases/download/${SELKIES_FORK_TAG}/selkies-js-interposer_${SELKIES_FORK_TAG}_ubuntu24.04_${arch}.deb" && \
     apt-get update && \
-    apt-get install --no-install-recommends -y "./selkies-js-interposer_v${SELKIES_VERSION}_ubuntu24.04_${arch}.deb" && \
-    rm -f "selkies-js-interposer_v${SELKIES_VERSION}_ubuntu24.04_${arch}.deb" && \
+    apt-get install --no-install-recommends -y "./selkies-js-interposer_${SELKIES_FORK_TAG}_ubuntu24.04_${arch}.deb" && \
+    rm -f "selkies-js-interposer_${SELKIES_FORK_TAG}_ubuntu24.04_${arch}.deb" && \
     apt-get clean && rm -rf /var/lib/apt/lists/*
 
 # Selkies install paths. Arch-specific lib dirs go in entrypoint.sh
